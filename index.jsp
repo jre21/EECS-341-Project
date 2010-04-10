@@ -1,43 +1,78 @@
 <%@page language="java" import="java.sql.*"%>
 <%
     ;
-String message = null;
-boolean redirect = false;
+String message = null; // Error message to display to user.
+String redirect = null; // Where to send the user.
+boolean hasCookie = false;
+Cookie cookie = null;
 String user = request.getParameter("uname");
 String password = request.getParameter("pword");
 
-// What to do if the user has entered a username/password combination
-if((user != "") && (user != null)) {
-  if(password == "" || password == null)
-    message = "Invalid username or password";
-  else {
-    // Initialize everything sql-related
-    Driver drs =
-      (Driver)Class.forName("org.gjt.mm.mysql.Driver").newInstance();
-    Connection Conn = DriverManager.getConnection("jdbc:mysql://localhost/ljl",
-						  "ljl","fanball");
-    Statement srs = Conn.createStatement();
-    String query = new String("select * from USER where username = '");
-    query = query.concat(user).concat("' and password = '");
-    query = query.concat(password).concat("';");
-    ResultSet rs = srs.executeQuery(query);
+/* Initialize the sql connection. */
+Driver drs = (Driver)Class.forName("org.gjt.mm.mysql.Driver").newInstance();
+Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/ljl",
+					      "ljl","fanball");
+String command = "{call isUser(?,?)}";
+CallableStatement cs = conn.prepareCall(command);
+ResultSet rs = null;
 
-    /* If the username/password combination is valid, store them as
-     * cookies and redirect to the site proper.
-     */
-    if (rs.isBeforeFirst()) {
-      redirect = true; // We want to redirect instead of displaying this page.
-      Cookie nomnomnom = new Cookie("uname", user);
-      response.addCookie(nomnomnom);
-      nomnomnom = new Cookie("password", password);
-      response.addCookie(nomnomnom);
+/* Try to parse the user's cookies */
+Cookie[] cookies = request.getCookies();
+for(int i=0; i<cookies.length; i++) {
+  cookie = cookies[i];
+  if(cookie.getName().equals("uname"))
+    if(cookie.getValue() != "") {
+      user = cookie.getValue();
+      hasCookie = true;
     }
-    else message = "Invalid username or password";
+  if(cookie.getName().equals("password"))
+    if(cookie.getValue() != "") {
+      password = cookie.getValue();
+      hasCookie = true;
+    }
+}
+/* Check whether uname/password combination is in database */
+if(hasCookie && (user!="") && (user!=null) && (password!="")
+   && (password!=null)) {
+  cs.setString(1, user);
+  cs.setString(2, password);
+  rs = cs.executeQuery();
+  rs.first();
+  if(rs.getString(1).charAt(0) != '0')
+    redirect = "list_leagues.jsp";
+  else {
+    cookie = new Cookie("uname", "");
+    response.addCookie(cookie);
+    cookie = new Cookie("password", "");
+    response.addCookie(cookie);
   }
 }
 
-// Display the login page.
-if (!redirect) {
+/* What to do if the user has entered a username/password combination */
+if(!hasCookie) {
+  if((user != "") && (user != null)) {
+    if(password == "" || password == null)
+      message = "Invalid username or password";
+    else {
+      /* Check the database for username/password combination.  If so,
+       * store them as cookies and redirect to the site proper. */
+      cs.setString(1, user);
+      cs.setString(2, password);
+      rs = cs.executeQuery();
+      rs.first();
+      if(rs.getString(1).charAt(0) != '0') {
+	redirect = "list_leagues.jsp";
+	cookie = new Cookie("uname", user);
+	response.addCookie(cookie);
+	cookie = new Cookie("password", password);
+	response.addCookie(cookie);
+      }
+    }
+  }
+}
+
+/* Display the login page. */
+if (redirect == null) {
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -91,20 +126,21 @@ if (!redirect) {
 </body>
 </html>
 <%
-//The user is logged in.  Redirect to the league list page.
+/* If redirect is set, redirect to another page. */
 } else {
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Refresh" content="5; URL=list_leagues.jsp" />
+<meta http-equiv="Refresh" content="5; URL=<%= redirect %>" />
 <link rel="stylesheet" type="text/css" href="style.css" />
 <title>Fantasy Football</title>
 </head>
 
 <body>
 <div align="center">
-Click <a href="style.css">here</a> if your browser does not redirect you.
+  Click <a href="<%= redirect %>">here</a> if your browser does not redirect
+  you.
 </div>
 </body>
 </html>
