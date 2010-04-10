@@ -3,70 +3,38 @@
     ;
 String message = null; // Error message to display to user.
 String redirect = null; // Where to send the user.
-boolean hasCookie = false;
 Cookie cookie = null;
 String user = request.getParameter("uname");
 String password = request.getParameter("pword");
+String password2 = request.getParameter("pword2");
 
 /* Initialize the sql connection. */
 Driver drs = (Driver)Class.forName("org.gjt.mm.mysql.Driver").newInstance();
 Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/ljl",
 					      "ljl","fanball");
-String command = "{call isUser(?,?)}";
+String command = "{call register(?,?)}";
 CallableStatement cs = conn.prepareCall(command);
 ResultSet rs = null;
 
-/* Try to parse the user's cookies */
-Cookie[] cookies = request.getCookies();
-for(int i=0; i<cookies.length; i++) {
-  cookie = cookies[i];
-  if(cookie.getName().equals("uname"))
-    if(cookie.getValue() != "") {
-      user = cookie.getValue();
-      hasCookie = true;
-    }
-  if(cookie.getName().equals("password"))
-    if(cookie.getValue() != "") {
-      password = cookie.getValue();
-      hasCookie = true;
-    }
-}
-/* Check whether uname/password combination is in database */
-if(hasCookie && (user!="") && (user!=null) && (password!="")
-   && (password!=null)) {
-  cs.setString(1, user);
-  cs.setString(2, password);
-  rs = cs.executeQuery();
-  rs.first();
-  if(rs.getString(1).charAt(0) != '0')
-    redirect = "user.jsp";
-  else {
-    cookie = new Cookie("uname", "");
-    response.addCookie(cookie);
-    cookie = new Cookie("password", "");
-    response.addCookie(cookie);
-  }
-}
-
-/* What to do if the user has entered a username/password combination */
-if(!hasCookie) {
-  if((user!="") && (user!=null) && (password!="") && (password!=null)) {
-    /* Check the database for username/password combination.  If so,
-     * store them as cookies and redirect to the site proper. */
+/* Add the user to the database. */
+if((user!="") && (user!=null)) {
+if(password.equals(password2)) {
     cs.setString(1, user);
     cs.setString(2, password);
     rs = cs.executeQuery();
     rs.first();
-    if(rs.getString(1).charAt(0) != '0') {
+    if(rs.getString(1).equals("")) {
       redirect = "user.jsp";
       cookie = new Cookie("uname", user);
       response.addCookie(cookie);
       cookie = new Cookie("password", password);
       response.addCookie(cookie);
     }
-    else message = "Invalid username or password";
+    else
+      message = rs.getString(1);
   }
-  else message = "Invalid username or password";
+  else
+    message = "Error: passwords do not match";
 }
 
 /* Display the login page. */
@@ -82,10 +50,12 @@ if (redirect == null) {
 
 <body>
 <div align="center">
-  <form action="index.jsp" method="post">
+  <form action="register.jsp" method="post">
   <table>
     <tr>
-      <td align="center" colspan="2"><h3>Fantasy Football</h3></td>
+      <td align="center" colspan="2">
+	<h3>Register for Fantasy Football</h3>
+      </td>
     </tr>
     <%if(message != null) {%>
       <tr>
@@ -110,13 +80,14 @@ if (redirect == null) {
       </td>
     </tr>
     <tr>
-      <td><a href="<%= request.getRequestURL() %>">refresh</a></td>
-      <td><input type="submit" value="Select" /></td>
+      <td>Confirm Password:</td>
+      <td>
+	<input type="password" name="pword2" size="60" style="width: 256px"/>
+      </td>
     </tr>
     <tr>
-      <td align="center" colspan="2">
-	Not a member?  <a href="register.jsp">register</a>
-      </td>
+      <td><a href="<%= request.getRequestURL() %>">refresh</a></td>
+      <td><input type="submit" value="Select" /></td>
     </tr>
   </table>
   </form>
@@ -137,8 +108,8 @@ if (redirect == null) {
 
 <body>
 <div align="center">
-  Click <a href="<%= redirect %>">here</a> if your browser does not redirect
-  you.
+  Registration successful!  Click <a href="<%= redirect %>">here</a>
+  if your browser does not redirect you.
 </div>
 </body>
 </html>
