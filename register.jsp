@@ -2,7 +2,7 @@
 <%
     ;
 String message = null; // Error message to display to user.
-String redirect = null; // Where to send the user.
+boolean confirm = false; // Confirm registration
 Cookie cookie = null;
 String user = request.getParameter("uname");
 String password = request.getParameter("pword");
@@ -18,13 +18,13 @@ ResultSet rs = null;
 
 /* Add the user to the database. */
 if((user!="") && (user!=null)) {
-if(password.equals(password2)) {
+  if(password.equals(password2)) {
     cs.setString(1, user);
     cs.setString(2, password);
     rs = cs.executeQuery();
     rs.first();
     if(rs.getString(1).equals("")) {
-      redirect = "user.jsp";
+      confirm = true;
       cookie = new Cookie("uname", user);
       response.addCookie(cookie);
       cookie = new Cookie("password", password);
@@ -38,7 +38,7 @@ if(password.equals(password2)) {
 }
 
 /* Display the login page. */
-if (redirect == null) {
+if (confirm == false) {
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -96,20 +96,20 @@ if (redirect == null) {
 </html>
 <%
 } else {
-/* Display a redirect page. */
+/* Display confirmation page. */
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Refresh" content="5; URL=<%= redirect %>" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="style.css" />
 <title>Fantasy Football</title>
 </head>
 
 <body>
 <div align="center">
-  Registration successful!  Click <a href="<%= redirect %>">here</a>
-  if your browser does not redirect you.
+  Registration successful!  Click <a href="user.jsp">here</a> to
+  continue to the main site.
 </div>
 </body>
 </html>

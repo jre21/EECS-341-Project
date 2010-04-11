@@ -18,18 +18,20 @@ ResultSet rs = null;
 
 /* Try to parse the user's cookies */
 Cookie[] cookies = request.getCookies();
-for(int i=0; i<cookies.length; i++) {
-  cookie = cookies[i];
-  if(cookie.getName().equals("uname"))
-    if(cookie.getValue() != "") {
-      user = cookie.getValue();
-      hasCookie = true;
-    }
-  if(cookie.getName().equals("password"))
-    if(cookie.getValue() != "") {
-      password = cookie.getValue();
-      hasCookie = true;
-    }
+if(cookies != null) {
+  for(int i=0; i<cookies.length; i++) {
+    cookie = cookies[i];
+    if(cookie.getName().equals("uname"))
+      if(cookie.getValue() != "") {
+	user = cookie.getValue();
+	hasCookie = true;
+      }
+    if(cookie.getName().equals("password"))
+      if(cookie.getValue() != "") {
+	password = cookie.getValue();
+	hasCookie = true;
+      }
+  }
 }
 /* Check whether uname/password combination is in database */
 if(hasCookie && (user!="") && (user!=null) && (password!="")
@@ -66,7 +68,6 @@ if(!hasCookie) {
     }
     else message = "Invalid username or password";
   }
-  else message = "Invalid username or password";
 }
 
 /* Display the login page. */

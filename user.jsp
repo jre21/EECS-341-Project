@@ -17,21 +17,24 @@ ResultSet rs = null;
 
 /* Parse cookies for username and password */
 Cookie[] cookies = request.getCookies();
-for(int i=0; i<cookies.length; i++) {
-  cookie = cookies[i];
-  if(cookie.getName().equals("uname"))
-    if(cookie.getValue() != "")
-      user = cookie.getValue();
-  if(cookie.getName().equals("password"))
-    if(cookie.getValue() != "")
-      password = cookie.getValue();
+if(cookies != null) {
+  for(int i=0; i<cookies.length; i++) {
+    cookie = cookies[i];
+    if(cookie.getName().equals("uname"))
+      if(cookie.getValue() != "")
+	user = cookie.getValue();
+    if(cookie.getName().equals("password"))
+      if(cookie.getValue() != "")
+	password = cookie.getValue();
+  }
+}
 
 if((user != "") && (password != "")) {
   cs.setString(1, user);
   cs.setString(2, password);
   rs = cs.executeQuery();
   rs.first();
-  if(rs.getString(1).charAt(0) == '0')
+  if(rs.getString(1).charAt(0) == '0') {
     cookie = new Cookie("uname", "");
     response.addCookie(cookie);
     cookie = new Cookie("password", "");
@@ -52,6 +55,13 @@ if(redirect == null) {
 </head>
 
 <body>
+<div align="center">
+  <table>
+    <tr>
+      <td><a href="user.jsp">Leagues</a></td>
+    </tr>
+  </table>
+</div>
 </body>
 </html>
 <%
