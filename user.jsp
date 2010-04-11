@@ -6,6 +6,7 @@ boolean hasCookie = false;
 Cookie cookie = null;
 String user = "";
 String password = "";
+String show = request.getParameter("show");
 
 /* Initialize the sql connection. */
 Driver drs = (Driver)Class.forName("org.gjt.mm.mysql.Driver").newInstance();
@@ -58,7 +59,25 @@ if(redirect == null) {
 <div align="center">
   <table>
     <tr>
-      <td><a href="user.jsp">Leagues</a></td>
+      <td align="center" colspan="2"><h3>Fantasy Football</h3></td>
+    </tr>
+    <tr>
+      <td>
+	<table border cellpadding=8>
+	  <tr>
+	    <td><a href="user.jsp">League Statistics</a></td>
+	    <td><a href="user.jsp?show=team">My Team</a></td>
+	    <td><a href="user.jsp?show=match">My Matchup</a></td>
+	    <td><a href="user.jsp?show=players">Available Players</a></td>
+	  </tr>
+	  <tr>
+	    <td><a href="user.jsp?show=draft">Draft Players</a></td>
+	    <td><a href="user.jsp?show=roster">Other Rosters</a></td>
+	    <td><a href="user.jsp?show=other_match">Other Matchups</a></td>
+	    <td><a href="logout.jsp">logout</a></td>
+	  </tr>
+	</table>
+      </td>
     </tr>
   </table>
 </div>
