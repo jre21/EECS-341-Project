@@ -1,3 +1,5 @@
+package org.apache.jsp.eecs341;
+
 //put all the method to generate the HTML for user
 import java.sql.*;
 import java.util.*;

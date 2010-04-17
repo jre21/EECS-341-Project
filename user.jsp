@@ -7,11 +7,12 @@ Cookie cookie = null;
 String user = "";
 String password = "";
 String show = request.getParameter("show");
+if(show==null) show = "";
 
 /* Initialize the sql connection. */
 Driver drs = (Driver)Class.forName("org.gjt.mm.mysql.Driver").newInstance();
-Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/ljl",
-					      "ljl","fanball");
+Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj",
+					      "jlj","fanball");
 String command = "{call isUser(?,?)}";
 CallableStatement cs = conn.prepareCall(command);
 ResultSet rs = null;
@@ -35,7 +36,7 @@ if((user != "") && (password != "")) {
   cs.setString(2, password);
   rs = cs.executeQuery();
   rs.first();
-  if(rs.getString(1).charAt(0) == '0') {
+  if(rs.getString(1).equals("0")) {
     cookie = new Cookie("uname", "");
     response.addCookie(cookie);
     cookie = new Cookie("password", "");
@@ -46,6 +47,34 @@ if((user != "") && (password != "")) {
 else redirect = "login.jsp";
 
 if(redirect == null) {
+  String query[][];
+  Statement srs = conn.createStatement();
+  if(show.equals("team")) {
+    query = new String[1][14];
+    query[0][0] = "select as position, p.name as 'player name', " +
+      "p.weekpoints as 'week points', p.totalpoints as 'total points'" + 
+      "from USER u, TEAMROSTER t, PLAYERS p where u.username = "
+      + user + " and u.Teamname = t.teamname and (t.QB = p.name or " + 
+      "t.RB1 = p.name or t.RB2 = p.name or t.WR1 = p.name or " +
+      "t.WR2 = p.name or t.WR3 = p.name or t.TE = p.name or " +
+      "t.DEF = p.name or t.K = p.name or t.BN1 = p.name or t.BN2 = p.name " +
+      "or t.BN3 = p.name or t.BN4 = p.name or t.BN5 = p.name)";
+  }
+  else if(show.equals("match")) {
+  }
+  else if(show.equals("players")) {
+  }
+  else if(show.equals("draft")) {
+  }
+  else if(show.equals("roster")) {
+  }
+  else if(show.equals("other_match")) {
+  }
+  else {
+    query0="select Teamname, windata, lossdata from USER order by " +
+      "windata desc";
+    query1="";
+  }
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -79,6 +108,14 @@ if(redirect == null) {
 	</table>
       </td>
     </tr>
+    <% if(show.equals("team")) { %>
+    <% } else if(show.equals("match")) { %>
+    <% } else if(show.equals("players")) { %>
+    <% } else if(show.equals("draft")) { %>
+    <% } else if(show.equals("roster")) { %>
+    <% } else if(show.equals("other_match")) { %>
+    <% } else { %>
+    <% } %>
   </table>
 </div>
 </body>
@@ -102,4 +139,4 @@ if(redirect == null) {
 </div>
 </body>
 </html>
-<%}%>
+<% } %>

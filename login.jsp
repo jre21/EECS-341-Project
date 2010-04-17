@@ -2,43 +2,76 @@
 <%
     ;
 String message = null; // Error message to display to user.
-boolean confirm = false; // Confirm registration
+String redirect = null; // Where to send the user.
+boolean hasCookie = false;
 Cookie cookie = null;
 String user = request.getParameter("uname");
 String password = request.getParameter("pword");
-String password2 = request.getParameter("pword2");
 
 /* Initialize the sql connection. */
 Driver drs = (Driver)Class.forName("org.gjt.mm.mysql.Driver").newInstance();
 Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj",
 					      "jlj","fanball");
-String command = "{call register(?,?)}";
+String command = "{call isUser(?,?)}";
 CallableStatement cs = conn.prepareCall(command);
 ResultSet rs = null;
 
-/* Add the user to the database. */
-if((user!="") && (user!=null)) {
-  if(password.equals(password2)) {
+/* Try to parse the user's cookies */
+Cookie[] cookies = request.getCookies();
+if(cookies != null) {
+  for(int i=0; i<cookies.length; i++) {
+    cookie = cookies[i];
+    if(cookie.getName().equals("uname"))
+      if(cookie.getValue() != "") {
+	user = cookie.getValue();
+	hasCookie = true;
+      }
+    if(cookie.getName().equals("password"))
+      if(cookie.getValue() != "") {
+	password = cookie.getValue();
+	hasCookie = true;
+      }
+  }
+}
+/* Check whether uname/password combination is in database */
+if(hasCookie && (user!="") && (user!=null) && (password!="")
+   && (password!=null)) {
+  cs.setString(1, user);
+  cs.setString(2, password);
+  rs = cs.executeQuery();
+  rs.first();
+  if(!rs.getString(1).equals("0"))
+    redirect = "user.jsp";
+  else {
+    cookie = new Cookie("uname", "");
+    response.addCookie(cookie);
+    cookie = new Cookie("password", "");
+    response.addCookie(cookie);
+  }
+}
+
+/* What to do if the user has entered a username/password combination */
+if(!hasCookie) {
+  if((user!="") && (user!=null) && (password!="") && (password!=null)) {
+    /* Check the database for username/password combination.  If so,
+     * store them as cookies and redirect to the site proper. */
     cs.setString(1, user);
     cs.setString(2, password);
     rs = cs.executeQuery();
     rs.first();
-    if(rs.getString(1).equals("")) {
-      confirm = true;
+    if(!rs.getString(1).equals("0")) {
+      redirect = "user.jsp";
       cookie = new Cookie("uname", user);
       response.addCookie(cookie);
       cookie = new Cookie("password", password);
       response.addCookie(cookie);
     }
-    else
-      message = rs.getString(1);
+    else message = "Invalid username or password";
   }
-  else
-    message = "Error: passwords do not match";
 }
 
 /* Display the login page. */
-if (confirm == false) {
+if (redirect == null) {
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -50,12 +83,10 @@ if (confirm == false) {
 
 <body>
 <div align="center">
-  <form action="register.jsp" method="post">
+  <form action="login.jsp" method="post">
   <table>
     <tr>
-      <td align="center" colspan="2">
-	<h3>Register for Fantasy Football</h3>
-      </td>
+      <td align="center" colspan="2"><h3>Fantasy Football</h3></td>
     </tr>
     <%if(message != null) {%>
       <tr>
@@ -80,14 +111,13 @@ if (confirm == false) {
       </td>
     </tr>
     <tr>
-      <td>Confirm Password:</td>
-      <td>
-	<input type="password" name="pword2" size="60" style="width: 256px"/>
-      </td>
-    </tr>
-    <tr>
       <td><a href="<%= request.getRequestURL() %>">refresh</a></td>
       <td><input type="submit" value="Select" /></td>
+    </tr>
+    <tr>
+      <td align="center" colspan="2">
+	Not a member?  <a href="register.jsp">register</a>
+      </td>
     </tr>
   </table>
   </form>
@@ -96,20 +126,20 @@ if (confirm == false) {
 </html>
 <%
 } else {
-/* Display confirmation page. */
+/* Display a redirect page. */
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Refresh" content="5; URL=<%= redirect %>" />
 <link rel="stylesheet" type="text/css" href="style.css" />
 <title>Fantasy Football</title>
 </head>
 
 <body>
 <div align="center">
-  Registration successful!  Click <a href="user.jsp">here</a> to
-  continue to the main site.
+  Click <a href="<%= redirect %>">here</a> if your browser does not redirect
+  you.
 </div>
 </body>
 </html>

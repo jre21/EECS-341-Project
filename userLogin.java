@@ -1,3 +1,5 @@
+package org.apache.jsp.eecs341;
+
 //a user login class to help the user to login  the system
 import java.sql.*;
 import java.util.*;
