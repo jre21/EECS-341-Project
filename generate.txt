@@ -1,5 +1,3 @@
-package org.apache.jsp.eecs341;
-
 //put all the method to generate the HTML for user
 import java.sql.*;
 import java.util.*;
@@ -37,7 +35,7 @@ class generate{
     
   }
   
-  public static boolean makeSchedule()throws Exception{//make the schedule for our schedule table
+  public static void makeSchedule()throws Exception{
 
     Class.forName("com.mysql.jdbc.Driver");
     Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
@@ -48,10 +46,6 @@ class generate{
     while(resultat.next()){
       userResult.add(resultat.getString(1));}
     int n=userResult.size();
-    
-    if(n==0)
-      return false;
-    
     int [][] matchTable;
     if(userResult.size()%2!=0){
       n++;
@@ -94,57 +88,162 @@ class generate{
         }
     }
     con.close();
-    return true;
   }
  
   private static int[][] doSchedule(int n){
-    
-    if(n==2){
-      int[][] theTable=new int[2][1];
-      theTable[0][0]=1;
-      theTable[1][0]=0;
-       return theTable;
-    }
-    
-    int[][] matchSet=new int[n-1][n];
-    for(int i=0;i<n-1;++i)
-      matchSet[i][0]=n-1;
-    matchSet[0][1]=0;
-    
-    int factor=1;
-    for(int i=2;i<n;i=i+2){
-      matchSet[0][i]=factor;
-      factor++;
-    }
-    for(int i=n-1;i>=3;i=i-2){
-      matchSet[0][i]=factor;
-        factor++;
-    }
-    
-    ArrayList<Factor> mySet=new ArrayList<Factor>();
+  
+    return roundRobin.get(n);
+  }
+  
+ /*   Set<Integer> checkSet=new HashSet<Integer>();
 
-    for(int k=1;k<n-1;++k){
-    for(int i=n-2;i>1;i=i-2){
-       mySet.add(new Factor(matchSet[k-1][i-1],matchSet[k-1][i]));
-    }
-     matchSet[k][1]=matchSet[k-1][n-1];
-     for(int i=2;i<n;i=i+2){
-       matchSet[k][i]=mySet.get(0).one;
-       matchSet[k][i+1]=mySet.get(0).two;
-       mySet.remove(0);
-     }
-     mySet.clear();
-    }
+    MyList[] allMatch=new MyList[n/2];
+     for(int i=0;i<allMatch.length;++i)
+       allMatch[i]=new MyList();
     
-    int[][] matchTable=new int[n][n-1];
+     int matchSize=n*(n-1)/2;
+    int difference=1;
     
-    for(int i=0;i<n-1;++i)
-      for(int j=0;j<n;j=j+2){
-         matchTable[matchSet[i][j]][i]=matchSet[i][j+1];
-         matchTable[matchSet[i][j+1]][i]=matchSet[i][j];
+    while(difference<n/2+1){*/
+    
+    /*  int one=0;
+      int two=difference;
+      Game myGame=new Game(n);
+     
+      while(true){
+      
+        myGame.setValue(one,two);
+        if(checkSet.contains(myGame.hashing()))
+           break;
+         
+        checkSet.add(myGame.hashing());
+        allMatch[difference-1].add(new Game(n,one,two));
+        one=(one+1)%n;
+        two=(two+1)%n;
       }
+      difference++;
+    }*/
+    
+    /*int[][] matchTable=new int[n][n-1];
+    for(int i=0;i<matchTable.length;++i)
+      for(int j=0;j<matchTable[i].length;++j)
+         matchTable[i][j]=-1;
+    
+    int index=n/2-1;
+    int date=0;
+    while(!allMatch[index].isEmpty()){
+     
+      Game myGame=allMatch[index].get(0);
+      matchTable[myGame.getFirst()][date]=myGame.getSecond();
+      matchTable[myGame.getSecond()][date]=myGame.getFirst();
+      allMatch[index].remove(0);
+    }
+    
+    if(n>2){
+    
+      index--;
+      while(date<n-2){
+      date=date+1;
+      int in=index;
+      ArrayList<Integer> allUser=reset(n);
+      while(!allUser.isEmpty()){
+  
+        for(int i=0;i<matchTable.length;++i){
+       for(int j=0;j<matchTable[0].length;++j)
+          System.out.print(matchTable[i][j]);
+          System.out.println();
+        }
+        System.out.println();
+        int matchIndex=0;
+        while(allMatch[in].isEmpty())
+          in--;
+        while(!allMatch[in].isEmpty() && matchIndex<allMatch[in].size()){
 
-    return matchTable;
+          Game myGame=allMatch[in].get(matchIndex);
+          if(conflict(matchTable,myGame,date)){
+            if(differ(allUser,in)<in){
+             in=differ(allUser,in);
+              break;
+            }
+            matchIndex++;
+          }
+          else {
+          
+            matchTable[myGame.getFirst()][date]=myGame.getSecond();
+            matchTable[myGame.getSecond()][date]=myGame.getFirst();
+            allMatch[in].remove(matchIndex);
+            allUser.remove(allUser.indexOf(myGame.getFirst()));
+            allUser.remove(allUser.indexOf(myGame.getSecond()));
+          }
+        }
+        
+
+     /* while(!allUser.isEmpty()){
+        
+          int min=allUser.get(0);
+          int max=allUser.get(allUser.size()-1);
+          in=max-min-1;
+          Game myGame=new Game(n,min,max);
+          if(!conflict(matchTable,myGame,date)){
+            
+            matchTable[min][date]=max;
+            matchTable[max][date]=min;
+            allMatch[in].remove(allMatch[in].indexAs(myGame));
+          }
+          else {
+          
+            boolean getDone=false;
+            while(!getDone){
+              
+               min++;
+               in=max-min-1;
+               myGame=new Game(n,min,max);
+               if(!conflict(matchTable,myGame,date)){
+            
+                  matchTable[min][date]=max;
+                  matchTable[max][date]=min;
+                  allMatch[in].remove(allMatch[in].indexAs(myGame));
+                  getDone=true;
+                }
+              }
+           }
+         }
+       }
+      if(allMatch[index].isEmpty())
+         index--;
+      }
+      }
+    }*/
+   
+    /*return allMatch;
+  }*/
+  
+  private static ArrayList<Integer> reset(int n){
+  
+    ArrayList<Integer> allUser=new ArrayList<Integer>();
+    for(int i=0;i<n;++i)
+      allUser.add(i);
+    return allUser;
+  }
+  
+  private static boolean conflict(int[][] a,Game b,int date){
+  
+   return (a[b.getFirst()][date]!=-1 || a[b.getSecond()][date]!=-1);
+  }
+  
+  private static int differ(ArrayList<Integer> a,int in){
+  
+    if(a.size()==0)
+      return in;
+    int max=a.get(0);
+    int min=a.get(0);
+    for(int i=0;i<a.size();++i){
+      if(a.get(i)<min)
+        min=a.get(i);
+      if(a.get(i)>max)
+        max=a.get(i);
+    }
+    return max-min-1;
   }
 
   public static ResultSet showAllSchedule()throws Exception{
@@ -241,67 +340,5 @@ class generate{
   
   public static void calWin()throws Exception{}
   
-  public static ResultSet rankTeams()throws Exception{
   
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
-    Statement instruction = con.createStatement();
-    ResultSet resultat = instruction.executeQuery("select u.username,u.teamname,u.windata,u.lossdata from user u order by u.rank");
-    con.close();
-    return resultat;
-    
-  }//* all of the team names in the league with their respective win/los record, and rank them in order
-  
-  public static ResultSet weeklyMatchUp(int currentWeek)throws Exception{
-  
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
-    Statement instruction = con.createStatement();
-    String getWeek="week"+currentWeek;
-    ResultSet resultat = instruction.executeQuery("select s."+getWeek+" from schedule s");
-    con.close();
-    return resultat;
-    
-  }//* the weekly matchups for the current week
-  
-  public static ResultSet showAllPlayerSimple()throws Exception{
-  
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
-    Statement instruction = con.createStatement();
-    ResultSet resultat = instruction.executeQuery("select p.name,p.position,p.nflteam from player p where p.availability=1");
-    con.close();
-    return resultat;
-    
-  }//* player name, position and team for all available players, I just put their nflteeam for all available players
-    
-  public static void clearTeamroster(int totalTeam)throws Exception{
-    
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
-    Statement instruction = con.createStatement();
-    ResultSet resultat = instruction.executeQuery("select * from teamroster");
-    String halfValue="";
-    for(int i=0;i<(totalTeam-1)*2;++i)
-       halfValue+=",N";
-    halfValue=halfValue+")";
-    while(resultat.next()){
-    
-      String theName=resultat.getString(1);
-      String wholeValue="values ("+theName+halfValue;
-      instruction.executeQuery("DELETE FROM teamroster where teamname='"+theName+"'");
-      instruction.executeQuery("INSERT INTO teamroster "+wholeValue);
-    }
-    con.close();
-    }// a new function to help clear all the Teamroster in the new session to insert all posion as N
-  
-  public static ResultSet draftOrder()throws Exception{
-    
-    Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
-    Statement instruction = con.createStatement();
-    ResultSet resultat = instruction.executeQuery("select u.username,u.teamname from user u order by u.lossdata");
-    con.close();
-    return resultat;
-  }//* the draft order of teams in the league, and which team's turn it is
 }
