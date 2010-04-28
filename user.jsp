@@ -5,6 +5,9 @@ boolean hasCookie = false;
 Cookie cookie = null;
 String user = "";
 String password = "";
+String team = "";
+String week = "";
+String alt_user = "";
 String show = request.getParameter("show");
 if(show==null) show = "";
 
@@ -15,7 +18,9 @@ Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj",
 String command = "{call isUser(?,?)}";
 CallableStatement cs = conn.prepareCall(command);
 ResultSet rs = null;
+ResultSet rs1 = null;
 ResultSetMetaData rsmd = null;
+ResultSetMetaData rsmd1 = null;
 
 /* Parse cookies for username and password */
 Cookie[] cookies = request.getCookies();
@@ -48,7 +53,9 @@ else redirect = "login.jsp";
 
 if(redirect == null) {
   String query;
+  String query1;
   Statement srs = conn.createStatement();
+  Statement srs1 = conn.createStatement();
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -79,161 +86,24 @@ if(redirect == null) {
       <td><a href="logout.jsp">logout</a></td>
     </tr>
   </table>
-  <br>
+  <br />
   <form action="<%=request.getRequestURL()%>" method="get">
-  <%response.addHeader("show",show);%>
+  <input type=hidden name="show" value="<%=show%>" />
   <table>
-    <% if(show.equals("team")) {
-    query = "SELECT p.position, p.name, p.totalpoints, t.* " +
-    "FROM players p, totalstats t where p.owner='"+user+"' and t.name=p.name;";
-    rs = srs.executeQuery(query);
-    rsmd = rs.getMetaData();
-    %>
-    <tr>
-      <td align="center" colspan="<%= rsmd.getColumnCount() %>">
-	<b>My Team</b>
-      </td>
-    </tr>
-    <tr style="font-size:80%">
-      <% for(int i=1; i <= 8; ++i) { %>
-      <td><%= rsmd.getColumnName(i) %></td>
-      <% } %>
-    </tr>
-    <% while(rs.next()) { %>
-    <tr style="font-size:80%">
-      <% for(int i=1; i <= 8; ++i) { %>
-      <td><%= rs.getString(i) %></td>
-      <% } %>
-    </tr>
-    <% } %>
-    <tr><td><br></td></tr>
-    <tr style="font-size:80%">
-      <% for(int i=1; i <= 3; ++i) { %>
-      <td><%= rsmd.getColumnName(i) %></td>
-      <% } %>
-      <% for(int i=9; i <= 13; ++i) { %>
-      <td><%= rsmd.getColumnName(i) %></td>
-      <% } %>
-    </tr>
-    <% while(rs.next()) { %>
-    <tr style="font-size:80%">
-      <% for(int i=1; i <= 3; ++i) { %>
-      <td><%= rs.getString(i) %></td>
-      <% } %>
-      <% for(int i=9; i <= 13; ++i) { %>
-      <td><%= rs.getString(i) %></td>
-      <% } %>
-    </tr>
-    <% } %>
-    <tr><td><br></td></tr>
-    <tr style="font-size:80%">
-      <% for(int i=1; i <= 3; ++i) { %>
-      <td><%= rsmd.getColumnName(i) %></td>
-      <% } %>
-      <% for(int i=14; i <= 18; ++i) { %>
-      <td><%= rsmd.getColumnName(i) %></td>
-      <% } %>
-    </tr>
-    <% while(rs.next()) { %>
-    <tr style="font-size:80%">
-      <% for(int i=1; i <= 3; ++i) { %>
-      <td><%= rs.getString(i) %></td>
-      <% } %>
-      <% for(int i=14; i <= 18; ++i) { %>
-      <td><%= rs.getString(i) %></td>
-      <% } %>
-    </tr>
-    <% } %>
-    <tr><td><br></td></tr>
-    <tr style="font-size:80%">
-      <% for(int i=1; i <= 3; ++i) { %>
-      <td><%= rsmd.getColumnName(i) %></td>
-      <% } %>
-      <% for(int i=19; i <= 23; ++i) { %>
-      <td><%= rsmd.getColumnName(i) %></td>
-      <% } %>
-    </tr>
-    <% while(rs.next()) { %>
-    <tr style="font-size:80%">
-      <% for(int i=1; i <= 3; ++i) { %>
-      <td><%= rs.getString(i) %></td>
-      <% } %>
-      <% for(int i=19; i <= 23; ++i) { %>
-      <td><%= rs.getString(i) %></td>
-      <% } %>
-    </tr>
-    <% } %>
-    <% } else if(show.equals("match")) { %>
-    <% } else if(show.equals("players")) {
-    query = "SELECT name, nflteam, position, totalpoints from players " +
-      "where availability=0;";
-    rs = srs.executeQuery(query);
-    rsmd = rs.getMetaData();
-    %>
-    <tr>
-      <td align="center" colspan="<%= rsmd.getColumnCount() %>">
-	<b>Available Players</b>
-      </td>
-    </tr>
-    <tr>
-      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
-      <td><%= rsmd.getColumnName(i) %></td>
-      <% } %>
-    </tr>
-    <% while(rs.next()) { %>
-    <tr>
-      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
-      <td><%= rs.getString(i) %></td>
-      <% } %>
-    </tr>
-    <% } %>
-    <% } else if(show.equals("draft")) { %>
-    <% } else if(show.equals("roster")) { %>
-    <% } else if(show.equals("other_match")) { %>
-    <% } else {
-    query = "select Teamname, windata, lossdata from user "
-    +"order by windata desc;";
-    rs = srs.executeQuery(query);
-    rsmd = rs.getMetaData();
-    %>
-    <tr>
-      <td align="center" colspan="<%= rsmd.getColumnCount() %>">
-	<b>Active Teams</b>
-      </td>
-    </tr>
-    <tr>
-      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
-      <td><%= rsmd.getColumnName(i) %></td>
-      <% } %>
-    </tr>
-    <% while(rs.next()) { %>
-    <tr>
-      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
-      <td><%= rs.getString(i) %></td>
-      <% } %>
-    </tr>
-    <% } %>
-  </table>
-  <br>
-  <table>
-    <% query = "select Teamname, windata, lossdata " +
-      "from user order by windata desc;";
-    rs = srs.executeQuery(query);
-    rsmd = rs.getMetaData();
-    %>
-    <tr>
-      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
-      <td><%= rsmd.getColumnName(i) %></td>
-      <% } %>
-    </tr>
-    <% while(rs.next()) { %>
-    <tr>
-      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
-      <td><%= rs.getString(i) %></td>
-      <% } %>
-    </tr>
-    <% } %>
-    <% } %>
+<%if(show.equals("team")) {%>
+<%@include file="team.jsp"%>
+<%} else if(show.equals("match")) {%>
+<%@include file="match.jsp"%>
+<%} else if(show.equals("players")) {%>
+<%@include file="players.jsp"%>
+<%} else if(show.equals("draft")) {%>
+<%@include file="draft.jsp"%>
+<%} else if(show.equals("roster")) {%>
+<%@include file="roster.jsp"%>
+<%} else if(show.equals("other_match")) {%>
+<%@include file="other_match.jsp"%>
+<%} else {%>
+  <% } %>
   </table>
   </form>
 </div>
