@@ -1,6 +1,5 @@
 <%@page language="java" import="java.sql.*"%>
 <%
-    ;
 String message = null; // Error message to display to user.
 String redirect = null; // Where to send the user.
 boolean hasCookie = false;
@@ -83,7 +82,7 @@ if (redirect == null) {
 
 <body>
 <div align="center">
-  <form action="login.jsp" method="post">
+  <form action="<%=request.getRequestURL()%>" method="post">
   <table>
     <tr>
       <td align="center" colspan="2"><h3>Fantasy Football</h3></td>
@@ -111,7 +110,7 @@ if (redirect == null) {
       </td>
     </tr>
     <tr>
-      <td><a href="<%= request.getRequestURL() %>">refresh</a></td>
+      <td></td>
       <td><input type="submit" value="Select" /></td>
     </tr>
     <tr>

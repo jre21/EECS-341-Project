@@ -1,6 +1,5 @@
 <%@page language="java" import="java.sql.*"%>
 <%
-    ;
 Cookie cookie = new Cookie("uname", "");
 response.addCookie(cookie);
 cookie = new Cookie("password", "");

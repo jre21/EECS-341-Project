@@ -1,4 +1,27 @@
+DROP TABLE IF EXISTS `jlj`.`weeklystats`;
+DROP TABLE IF EXISTS `jlj`.`totalstats`;
+DROP TABLE IF EXISTS `jlj`.`teamroster`;
+DROP TABLE IF EXISTS `jlj`.`sumwin`;
+DROP TABLE IF EXISTS `jlj`.`schedule`;
+DROP TABLE IF EXISTS `jlj`.`players`;
 DROP TABLE IF EXISTS `jlj`.`countpoints`;
+DROP TABLE IF EXISTS `jlj`.`user`;
+
+CREATE TABLE  `jlj`.`user` (
+  `username` char(20) NOT NULL DEFAULT '',
+  `teamname` char(30) DEFAULT NULL,
+  `password` char(20) DEFAULT NULL,
+  `totalpoints` double DEFAULT NULL,
+  `weekpoints` double DEFAULT NULL,
+  `rank` int(11) DEFAULT NULL,
+  `windata` int(11) DEFAULT NULL,
+  `lossdata` int(11) DEFAULT NULL,
+  `modes` int(11) DEFAULT NULL,
+  PRIMARY KEY (`username`),
+  UNIQUE KEY `rank` (`rank`),
+  UNIQUE KEY `Teamname` (`teamname`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE  `jlj`.`countpoints` (
   `teamname` char(30) NOT NULL DEFAULT '',
   `playername` char(30) NOT NULL DEFAULT '',
@@ -8,7 +31,6 @@ CREATE TABLE  `jlj`.`countpoints` (
   PRIMARY KEY (`teamname`,`playername`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `jlj`.`players`;
 CREATE TABLE  `jlj`.`players` (
   `name` char(30) NOT NULL DEFAULT '',
   `nflteam` char(30) DEFAULT NULL,
@@ -23,7 +45,6 @@ CREATE TABLE  `jlj`.`players` (
   CONSTRAINT `FK_players_1` FOREIGN KEY (`owner`) REFERENCES `user` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `jlj`.`schedule`;
 CREATE TABLE  `jlj`.`schedule` (
   `username` char(20) NOT NULL,
   `week1` char(20) DEFAULT NULL,
@@ -32,7 +53,6 @@ CREATE TABLE  `jlj`.`schedule` (
   CONSTRAINT `schedule_ibfk_1` FOREIGN KEY (`username`) REFERENCES `user` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `jlj`.`sumwin`;
 CREATE TABLE  `jlj`.`sumwin` (
   `username` char(30) NOT NULL DEFAULT '',
   `wins` int(11) DEFAULT NULL,
@@ -40,7 +60,6 @@ CREATE TABLE  `jlj`.`sumwin` (
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `jlj`.`teamroster`;
 CREATE TABLE  `jlj`.`teamroster` (
   `teamname` char(30) NOT NULL DEFAULT '',
   `QB` char(30) DEFAULT NULL,
@@ -75,7 +94,6 @@ CREATE TABLE  `jlj`.`teamroster` (
   CONSTRAINT `FK_teamroster_1` FOREIGN KEY (`teamname`) REFERENCES `user` (`teamname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `jlj`.`totalstats`;
 CREATE TABLE  `jlj`.`totalstats` (
   `name` char(30) NOT NULL DEFAULT '',
   `passTD` double DEFAULT NULL,
@@ -101,23 +119,6 @@ CREATE TABLE  `jlj`.`totalstats` (
   CONSTRAINT `totalstats_ibfk_1` FOREIGN KEY (`name`) REFERENCES `players` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `jlj`.`user`;
-CREATE TABLE  `jlj`.`user` (
-  `username` char(20) NOT NULL DEFAULT '',
-  `teamname` char(30) DEFAULT NULL,
-  `password` char(20) DEFAULT NULL,
-  `totalpoints` double DEFAULT NULL,
-  `weekpoints` double DEFAULT NULL,
-  `rank` int(11) DEFAULT NULL,
-  `windata` int(11) DEFAULT NULL,
-  `lossdata` int(11) DEFAULT NULL,
-  `modes` int(11) DEFAULT NULL,
-  PRIMARY KEY (`username`),
-  UNIQUE KEY `rank` (`rank`),
-  UNIQUE KEY `Teamname` (`teamname`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `jlj`.`weeklystats`;
 CREATE TABLE  `jlj`.`weeklystats` (
   `name` char(30) NOT NULL DEFAULT '',
   `passTD` double DEFAULT NULL,

@@ -1,10 +1,10 @@
 <%@page language="java" import="java.sql.*"%>
 <%
-    ;
 String message = null; // Error message to display to user.
 boolean confirm = false; // Confirm registration
 Cookie cookie = null;
 String user = request.getParameter("uname");
+String team = request.getParameter("tname");
 String password = request.getParameter("pword");
 String password2 = request.getParameter("pword2");
 
@@ -12,26 +12,31 @@ String password2 = request.getParameter("pword2");
 Driver drs = (Driver)Class.forName("org.gjt.mm.mysql.Driver").newInstance();
 Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj",
 					      "jlj","fanball");
-String command = "{call register(?,?)}";
+String command = "{call register(?,?,?)}";
 CallableStatement cs = conn.prepareCall(command);
 ResultSet rs = null;
 
 /* Add the user to the database. */
 if((user!="") && (user!=null)) {
-  if(password.equals(password2)) {
-    cs.setString(1, user);
-    cs.setString(2, password);
-    rs = cs.executeQuery();
-    rs.first();
-    if(rs.getString(1).equals("")) {
-      confirm = true;
-      cookie = new Cookie("uname", user);
-      response.addCookie(cookie);
-      cookie = new Cookie("password", password);
-      response.addCookie(cookie);
+  if((team!="") && (team!=null)) {
+    if(password.equals(password2)) {
+      cs.setString(1, user);
+      cs.setString(2, team);
+      cs.setString(3, password);
+      rs = cs.executeQuery();
+      rs.first();
+      if(rs.getString(1).equals("")) {
+	confirm = true;
+	cookie = new Cookie("uname", user);
+	response.addCookie(cookie);
+	cookie = new Cookie("password", password);
+	response.addCookie(cookie);
+      }
+      else
+	message = rs.getString(1);
     }
     else
-      message = rs.getString(1);
+      message = "Error: must enter a team name";
   }
   else
     message = "Error: passwords do not match";
@@ -50,7 +55,7 @@ if (confirm == false) {
 
 <body>
 <div align="center">
-  <form action="register.jsp" method="post">
+  <form action="<%=request.getRequestURL()%>" method="post">
   <table>
     <tr>
       <td align="center" colspan="2">
@@ -73,6 +78,16 @@ if (confirm == false) {
 	<%}%>
       </td>
     </tr>
+      <td>Teamname:</td>
+      <td>
+	<%if(team == null) {%>
+	  <input type="text" name="tname" size="60" style="width: 256px"/>
+	<%} else {%>
+	  <input type="text" name="tname" value="<%= team %>"
+	  size="60" style="width: 256px"/>
+	<%}%>
+      </td>
+    </tr>
     <tr>
       <td>Password:</td>
       <td>
@@ -86,7 +101,7 @@ if (confirm == false) {
       </td>
     </tr>
     <tr>
-      <td><a href="<%= request.getRequestURL() %>">refresh</a></td>
+      <td></td>
       <td><input type="submit" value="Select" /></td>
     </tr>
   </table>
