@@ -16,6 +16,7 @@ Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj",
 String command = "{call isUser(?,?)}";
 CallableStatement cs = conn.prepareCall(command);
 ResultSet rs = null;
+ResultSetMetaData rsmd = null;
 
 /* Parse cookies for username and password */
 Cookie[] cookies = request.getCookies();
@@ -47,34 +48,8 @@ if((user != "") && (password != "")) {
 else redirect = "login.jsp";
 
 if(redirect == null) {
-  String query[][];
+  String query;
   Statement srs = conn.createStatement();
-  if(show.equals("team")) {
-    query = new String[1][14];
-    query[0][0] = "select as position, p.name as 'player name', " +
-      "p.weekpoints as 'week points', p.totalpoints as 'total points'" + 
-      "from USER u, TEAMROSTER t, PLAYERS p where u.username = "
-      + user + " and u.Teamname = t.teamname and (t.QB = p.name or " + 
-      "t.RB1 = p.name or t.RB2 = p.name or t.WR1 = p.name or " +
-      "t.WR2 = p.name or t.WR3 = p.name or t.TE = p.name or " +
-      "t.DEF = p.name or t.K = p.name or t.BN1 = p.name or t.BN2 = p.name " +
-      "or t.BN3 = p.name or t.BN4 = p.name or t.BN5 = p.name)";
-  }
-  else if(show.equals("match")) {
-  }
-  else if(show.equals("players")) {
-  }
-  else if(show.equals("draft")) {
-  }
-  else if(show.equals("roster")) {
-  }
-  else if(show.equals("other_match")) {
-  }
-  else {
-    query0="select Teamname, windata, lossdata from USER order by " +
-      "windata desc";
-    query1="";
-  }
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -88,33 +63,95 @@ if(redirect == null) {
 <div align="center">
   <table>
     <tr>
-      <td align="center" colspan="2"><h3>Fantasy Football</h3></td>
+      <td align="center"><h3>Fantasy Football</h3></td>
+    </tr>
+  </table>
+  <table border cellpadding=8>
+    <tr>
+      <td><a href="user.jsp">League Statistics</a></td>
+      <td><a href="user.jsp?show=team">My Team</a></td>
+      <td><a href="user.jsp?show=match">My Matchup</a></td>
+      <td><a href="user.jsp?show=players">Available Players</a></td>
     </tr>
     <tr>
-      <td>
-	<table border cellpadding=8>
-	  <tr>
-	    <td><a href="user.jsp">League Statistics</a></td>
-	    <td><a href="user.jsp?show=team">My Team</a></td>
-	    <td><a href="user.jsp?show=match">My Matchup</a></td>
-	    <td><a href="user.jsp?show=players">Available Players</a></td>
-	  </tr>
-	  <tr>
-	    <td><a href="user.jsp?show=draft">Draft Players</a></td>
-	    <td><a href="user.jsp?show=roster">Other Rosters</a></td>
-	    <td><a href="user.jsp?show=other_match">Other Matchups</a></td>
-	    <td><a href="logout.jsp">logout</a></td>
-	  </tr>
-	</table>
-      </td>
+      <td><a href="user.jsp?show=draft">Draft Players</a></td>
+      <td><a href="user.jsp?show=roster">Other Rosters</a></td>
+      <td><a href="user.jsp?show=other_match">Other Matchups</a></td>
+      <td><a href="logout.jsp">logout</a></td>
     </tr>
+  </table>
+  <br>
+  <table>
     <% if(show.equals("team")) { %>
     <% } else if(show.equals("match")) { %>
     <% } else if(show.equals("players")) { %>
+    query = "SELECT * from PLAYERS where availability=0;";
+    rs = srs.executeQuery(query);
+    rsmd = rs.getMetaData();
+    %>
+    <tr>
+      <td align="center" colspan="<%= rsmd.getColumnCount() %>">
+	<b>Available Players</b>
+      </td>
+    </tr>
+    <tr>
+      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
+      <td><%= rsmd.getColumnName(i) %></td>
+      <% } %>
+    </tr>
+    <% while(rs.next()) { %>
+    <tr>
+      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
+      <td><%= rs.getString(i) %></td>
+      <% } %>
+    </tr>
+    <% } %>
     <% } else if(show.equals("draft")) { %>
     <% } else if(show.equals("roster")) { %>
     <% } else if(show.equals("other_match")) { %>
-    <% } else { %>
+    <% } else {
+    query = "select Teamname Team, windata Wins, lossdata Losses " +
+      "from USER order by windata desc;";
+    rs = srs.executeQuery(query);
+    rsmd = rs.getMetaData();
+    %>
+    <tr>
+      <td align="center" colspan="<%= rsmd.getColumnCount() %>">
+	<b>Active Teams</b>
+      </td>
+    </tr>
+    <tr>
+      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
+      <td><%= rsmd.getColumnName(i) %></td>
+      <% } %>
+    </tr>
+    <% while(rs.next()) { %>
+    <tr>
+      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
+      <td><%= rs.getString(i) %></td>
+      <% } %>
+    </tr>
+    <% } %>
+  </table>
+  <br>
+  <table>
+    <% query = "select Teamname Team, windata Wins, lossdata Losses " +
+      "from USER order by windata desc;";
+    rs = srs.executeQuery(query);
+    rsmd = rs.getMetaData();
+    %>
+    <tr>
+      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
+      <td><%= rsmd.getColumnName(i) %></td>
+      <% } %>
+    </tr>
+    <% while(rs.next()) { %>
+    <tr>
+      <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>
+      <td><%= rs.getString(i) %></td>
+      <% } %>
+    </tr>
+    <% } %>
     <% } %>
   </table>
 </div>
