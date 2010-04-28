@@ -15,7 +15,7 @@ class userLogin{
     teamname="";
     if(correctUser()){
       Class.forName("com.mysql.jdbc.Driver");
-      Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+      Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
       Statement instruction = con.createStatement();
       ResultSet resultat = instruction.executeQuery("SELECT u.teamname FROM user u where u.username='"+username+"'");
       resultat.next();
@@ -27,7 +27,7 @@ class userLogin{
   public boolean correctUser()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * FROM user u where u.username='"+username+"' AND u.password='"+password+"'");
     con.close();
@@ -36,7 +36,7 @@ class userLogin{
 
   public boolean existUser()throws Exception{
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * FROM user u where u.username='"+username+"'");
     con.close();
@@ -52,7 +52,7 @@ class userLogin{
     }
     
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("INSERT INTO user(username,teamname,password,totalpoints,weekpoints,rank,windata,lossdata) VALUES ('"+u+"','"+t+"','"+p+"',0,0,0,0,0,0)");
     con.close();
@@ -71,7 +71,7 @@ class userLogin{
   
   public ResultSet showMyINF()throws Exception{
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * FROM user u where u.username='"+username+"'");
     con.close();
@@ -80,7 +80,7 @@ class userLogin{
   
   public ResultSet showMyTeam()throws Exception{
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * FROM teamroster t where t.teamname IN (select u.teamname from user u where u.username='"+username+"'");
     con.close();
@@ -90,7 +90,7 @@ class userLogin{
   public ResultSet showMySchedule()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * FROM schedule s where s.teamname IN (SELECT u.teamname from user u where u.username='"+username+"')");
     con.close();
@@ -100,7 +100,7 @@ class userLogin{
   public String showMyMatchNow(int time)throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * FROM schedule s where s.teamname='"+teamname+"'");
     resultat.next();
@@ -111,7 +111,7 @@ class userLogin{
   public ResultSet showMyMatchAll()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * FROM schedule s where s.teamname IN (SELECT u.teamname from user u where u.username='"+username+"')");
     resultat.next();
@@ -122,7 +122,7 @@ class userLogin{
   public ResultSet showMyPlayersINF()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * FROM players p where p.owner='"+username+"'");
     resultat.next();
@@ -133,7 +133,7 @@ class userLogin{
   public ResultSet showMyPlayersTTP()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * FROM totalstats t where t.name IN (select p.name from players p where p.owner='"+username+"')");
     resultat.next();
@@ -144,7 +144,7 @@ class userLogin{
   public ResultSet showMyPlyaersWSP()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * FROM weeklystats w where w.name IN (select p.name from players p where p.owner='"+username+"')");
     resultat.next();
@@ -155,7 +155,7 @@ class userLogin{
   public void setPosition(String name,String position)throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("update teamroster t set t."+position+"='"+name+"' where t.teamname IN (select u.teamname from user u where u.username='"+username+"')");
     con.close();
@@ -164,7 +164,7 @@ class userLogin{
   public void selectPlayers(String name)throws Exception{
     
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("update players p set p.availability=1,p.owner='"+username+"' where p.name='"+name+"'");
     con.close();
@@ -173,7 +173,7 @@ class userLogin{
   public ResultSet showTeam()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("select u.teamname from user u where u.username='"+username+"'");
     con.close();
@@ -183,7 +183,7 @@ class userLogin{
   public ResultSet showTeamLineUp()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("select t.teamname,t.QB,t.RB1,t.RB2,t.WR1,t.WR2,t.WR3,t.TE,t.DEF,t.K from teamroster t where t.teamname='"+teamname+"'");
     con.close();
@@ -193,7 +193,7 @@ class userLogin{
   public ResultSet showTeamBench()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("select t.teamname,t.BN1,t.BN2,t.BN3,t.BN4,t.BN5 from teamroster t where t.teamname='"+teamname+"'");
     con.close();
@@ -203,7 +203,7 @@ class userLogin{
   public ResultSet showTeamAllPlayer()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("select p.name,p.position,t.* from players p,totalstats t where p.name=t.name AND p.owner='"+username+"'");
     con.close();
@@ -213,7 +213,7 @@ class userLogin{
   public ResultSet showOpposingTeam(int currentWeek)throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet temp= instruction.executeQuery("select t.week"+currentWeek+" from teamroster t where t.teamname='"+teamname+"'");
     temp.next();
@@ -226,7 +226,7 @@ class userLogin{
   public void updateTeamroster(String playerName)throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     instruction.executeQuery("UPDATE players p SET p.availability=0 AND p.owner='"+username+"' WHERE name='"+playerName+"'");
     ResultSet resultat = instruction.executeQuery("SELECT t.* from teamroster t,user u where u.username='"+username+"' AND u.teamname=t.teamname");
@@ -252,7 +252,7 @@ class userLogin{
   public void randomStats()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet temp= instruction.executeQuery("select * from teamroster t where t.teamname='"+teamname+"'");
     temp.next();

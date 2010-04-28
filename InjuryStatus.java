@@ -71,7 +71,7 @@ public class InjuryStatus
     {
         Class.forName("com.mysql.jdbc.Driver");
         //DONT FORGET TO PUT THE USERNAME AND PASS FOR DRIVER CONNECTION TO DATABASE
-        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
         Statement instruction = conn.createStatement();
         //NEED TO FIGURE OUT HOT TO UPDATE ROW BY ROW
         ResultSet result = instruction.executeQuery("UPDATE players p SET injury="+inj+"");

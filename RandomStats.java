@@ -324,7 +324,7 @@ public class RandomStats
     {
         Class.forName("com.mysql.jdbc.Driver");
         //DON'T FORGET TO PUT THE USERNAME AND PASS FOR YOUR DRIVER CONNECTION TO THE DATABASE BELOW
-        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
         Statement instruction = conn.createStatement();
         //NEED TO FIGURE OUT HOW TO UPDATE ROW BY ROW
         ResultSet result = instruction.executeQuery("UPDATE weeklystats w SET w.passTD="+td+",w.passYards="+yds+",w.interceptions="+intcp+",w.calpoints="+points+" WHERE w.name='"+playerName+"'" );
@@ -334,7 +334,7 @@ public class RandomStats
     {
         Class.forName("com.mysql.jdbc.Driver");
         //DON'T FORGET TO PUT THE USERNAME AND PASS FOR YOUR DRIVER CONNECTION TO THE DATABASE BELOW
-        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
         Statement instruction = conn.createStatement();
         //NEED TO FIGURE OUT HOW TO UPDATE ROW BY ROW
         ResultSet result = instruction.executeQuery("UPDATE weeklystats w SET w.rushTD="+td+",w.rushYards="+yds+",w.fumbles="+fmbl+",w.calpoints="+points+" WHERE w.name='"+playerName+"'");
@@ -344,7 +344,7 @@ public class RandomStats
     {
         Class.forName("com.mysql.jdbc.Driver");
         //DON'T FORGET TO PUT THE USERNAME AND PASS FOR YOUR DRIVER CONNECTION TO THE DATABASE BELOW
-        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
         Statement instruction = conn.createStatement();
         //NEED TO FIGURE OUT HOW TO UPDATE ROW BY ROW
         ResultSet result = instruction.executeQuery("UPDATE weeklystats w SET w.receivingTD="+td+",w.receivingYards="+yds+",w.calpoints="+points+" WHERE w.name='"+playerName+"'");
@@ -354,7 +354,7 @@ public class RandomStats
     {
         Class.forName("com.mysql.jdbc.Driver");
         //DON'T FORGET TO PUT THE USERNAME AND PASS FOR YOUR DRIVER CONNECTION TO THE DATABASE BELOW
-        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
         Statement instruction = conn.createStatement();
         //NEED TO FIGURE OUT HOW TO UPDATE ROW BY ROW
         ResultSet result = instruction.executeQuery("UPDATE weeklystats w SET w.receivingTD="+td+",w.receivingYards="+yds+",w.calpoints="+points+" WHERE w.name='"+playerName+"'");
@@ -364,7 +364,7 @@ public class RandomStats
     {
         Class.forName("com.mysql.jdbc.Driver");
         //DON'T FORGET TO PUT THE USERNAME AND PASS FOR YOUR DRIVER CONNECTION TO THE DATABASE BELOW
-        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
         Statement instruction = conn.createStatement();
         //NEED TO FIGURE OUT HOW TO UPDATE ROW BY ROW
         ResultSet result = instruction.executeQuery("UPDATE weeklystats w SET w.turnovers="+to+",w.sacks="+sack+",w.defensiveTD="+td+",w.pointsallowed="+allow+", calpoints="+points+" w.name='"+playerName+"'");
@@ -374,7 +374,7 @@ public class RandomStats
     {
         Class.forName("com.mysql.jdbc.Driver");
         //DON'T FORGET TO PUT THE USERNAME AND PASS FOR YOUR DRIVER CONNECTION TO THE DATABASE BELOW
-        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
         Statement instruction = conn.createStatement();
         //NEED TO FIGURE OUT HOW TO UPDATE ROW BY ROW
         ResultSet result = instruction.executeQuery("UPDATE weeklystats w SET w.fieldgoalless40="+l40+",w.fieldgoalgreater40="+g40+",w.missedfieldgoaless40="+ml40+",w.missedfieldgoalgreater40="+mg40+",w.PAT="+pat+",w.missPAT="+mpat+",w.calpoints="+points+" WHERE w.name='"+playerName+"'");

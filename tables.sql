@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS `jlj`.`countpoints`;
 DROP TABLE IF EXISTS `jlj`.`user`;
 
 CREATE TABLE  `jlj`.`user` (
+  `Id` int(11) NOT NULL auto_increment,
   `username` char(20) NOT NULL DEFAULT '',
   `teamname` char(30) DEFAULT NULL,
   `password` char(20) DEFAULT NULL,

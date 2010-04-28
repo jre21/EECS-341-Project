@@ -11,7 +11,7 @@ public class SelectWinner
     {
         Class.forName("com.mysql.jdbc.Driver");
         //DON'T FORGET TO PUT THE USERNAME AND PASS FOR YOUR DRIVER CONNECTION TO THE DATABASE BELOW
-        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
         Statement instruction = conn.createStatement();
         ResultSet result = instruction.executeQuery("SELECT teamname FROM user u");
         
@@ -27,7 +27,7 @@ public class SelectWinner
     {
         Class.forName("com.mysql.jdbc.Driver");
         //DON'T FORGET TO PUT THE USERNAME AND PASS FOR YOUR DRIVER CONNECTION TO THE DATABASE BELOW
-        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
         Statement instruction = conn.createStatement();
         ResultSet result1 = instruction.executeQuery("SELECT calpoints FROM players p WHERE owner="+team+"");
         

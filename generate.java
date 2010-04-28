@@ -9,7 +9,7 @@ class generate{
   public static void startGame()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("update user u set u.modes=1 where u.modes=0");// change all the user exist now to the modes 1 which is play mode
     makeSchedule();
@@ -40,7 +40,7 @@ class generate{
   public static boolean makeSchedule()throws Exception{//make the schedule for our schedule table
 
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT u.username from user u order by u.lossdata");
     resultat.next();
@@ -150,7 +150,7 @@ class generate{
   public static ResultSet showAllSchedule()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * from schedule");
     con.close();
@@ -160,7 +160,7 @@ class generate{
   public static ResultSet showAvaPlayers()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * from players p where p.availability=0");// change all the user exist now to the modes 1 which is play mode
     con.close();
@@ -171,7 +171,7 @@ class generate{
   public static ResultSet showAllPlayers()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT * from players");
     con.close();
@@ -181,7 +181,7 @@ class generate{
   public static ResultSet updateWeekStats(String name,double passTD,double passyards,double interceptions,double rushTD,double rushyards,double fumbles,double receivingTD,double receivingyards,double pointsallowed,double turnovers,double sacks,double defensiveTD,double fl40,double fg40,double ml40,double mg40,double pat,double mpat)throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     double total=passTD+passyards+interceptions+rushTD+rushyards+fumbles+receivingTD+receivingyards+pointsallowed+turnovers+sacks+defensiveTD+fl40+fg40+ml40+mg40+pat+mpat;
     ResultSet resultat = instruction.executeQuery("UPDATE weeklystats w SET passTD="+passTD+",passyards="+passyards+",interceptions="+interceptions+",rushTD="+rushTD+",rushyards="+rushyards+",fumbles="+fumbles+",receivingTD="+receivingTD+",receivingyards="+receivingyards+",pointsallowed="+pointsallowed+",turnovers="+turnovers+",sacks="+sacks+",defensiveTD="+defensiveTD+",fieldgoalless40="+fl40+",fieldgoalgreater40="+fg40+",missedfieldgoaless40="+ml40+",missedfieldgoalgreater40="+mg40+",PAT="+pat+",missedPAT="+mpat+",calpoints="+total+" where w.name='"+name+"'");//
@@ -192,7 +192,7 @@ class generate{
   public static ResultSet showRank()throws Exception{
     
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT u.teamname,u.windata FROM user u order by u.lossdata");
     con.close();
@@ -202,7 +202,7 @@ class generate{
   public static ResultSet showWin(String user1,String user2)throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat =instruction.executeQuery("SELECT u.username,u.windata from user u order by u.lossdata");
     con.close();
@@ -212,7 +212,7 @@ class generate{
   public static void startNextWeek()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     instruction.executeQuery("update totalstats t,weeklystats w set t.passTD=t.passTD+w.passTD,t.passyards=t.passyards+w.passyards,t.interceptions=t.interceptions+w.interceptions,t.rushTD=t.rushTD+w.rushTD,t.rushyards=t.rushyards+w.rushyards,t.fumbles=t.fumbles+w.fumbles,t.receivingTD=t.receivingTD+w.receivingTD,t.receivingyards=t.receivingyards+w.receivingyards,t.pointsallowed=t.pointsallowed+w.pointsallowed,t.turnovers=t.turnovers+w.turnovers,t.sacks=t.sacks+w.sacks,t.defensiveTD=t.defensiveTD+w.defensiveTD,t.fieldgoalless40=t.fieldgoalless40+w.fieldgoalless40,t.fieldgoalgreater40=t.fieldgoalgreater40+w.fieldgoalgreater40,t.missedfieldgoaless40=t.missedfieldgoaless40+w.missedfieldgoaless40,t.missedfieldgoalgreater40=t.missedfieldgoalgreater40+w.missedfieldgoalgreater40,t.PAT=t.PAT+w.PAT,t.missedPAT=t.missedPAT+w.missedPAT,t.calpoints=t.calpoints+w.calpoints where t.name=w.name");
     calWin();
@@ -222,7 +222,7 @@ class generate{
   public static void setInjury(String name,String types)throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("update players p set p.injury='"+types+"' where p.name='"+name+"'");
     con.close();
@@ -232,7 +232,7 @@ class generate{
   public static ResultSet determineSelection()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("select u.username from user u oreder by lossdata");
     con.close();
@@ -244,7 +244,7 @@ class generate{
   public static ResultSet rankTeams()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("select u.username,u.teamname,u.windata,u.lossdata from user u order by u.rank");
     con.close();
@@ -255,7 +255,7 @@ class generate{
   public static ResultSet weeklyMatchUp(int currentWeek)throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     String getWeek="week"+currentWeek;
     ResultSet resultat = instruction.executeQuery("select s."+getWeek+" from schedule s");
@@ -267,7 +267,7 @@ class generate{
   public static ResultSet showAllPlayerSimple()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("select p.name,p.position,p.nflteam from player p where p.availability=1");
     con.close();
@@ -278,7 +278,7 @@ class generate{
   public static void clearTeamroster(int totalTeam)throws Exception{
     
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("select * from teamroster");
     String halfValue="";
@@ -298,7 +298,7 @@ class generate{
   public static ResultSet draftOrder()throws Exception{
     
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("select u.username,u.teamname from user u order by u.lossdata");
     con.close();
@@ -308,7 +308,7 @@ class generate{
   public static void initialWeeklystats()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("update weeklystats set passTD=0,passyards=0,interceptions=0,rushTD=0,rushyards=0,fumbles=0,receivingTD=0,receivingyards=0,pointsallowed=0,turnovers=0,sacks=0,defensiveTD=0,fieldgoalless40=0,fieldgoalgreater40=0,missedfieldgoaless40=0,missedfieldgoalgreater40=0,PAT=0,missedPAT=0,calpoints=0");
     con.close();
@@ -317,7 +317,7 @@ class generate{
   public static void initialtotalstats()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("update totalstats set passTD=0,passyards=0,interceptions=0,rushTD=0,rushyards=0,fumbles=0,receivingTD=0,receivingyards=0,pointsallowed=0,turnovers=0,sacks=0,defensiveTD=0,fieldgoalless40=0,fieldgoalgreater40=0,missedfieldgoaless40=0,missedfieldgoalgreater40=0,PAT=0,missedPAT=0,calpoints=0");
     con.close();
@@ -326,7 +326,7 @@ class generate{
   public static void randomInjuryStatus()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
     ResultSet resultat = instruction.executeQuery("SELECT name from player");
     while(resultat.next()){
