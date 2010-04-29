@@ -1,13 +1,17 @@
-DROP TABLE IF EXISTS `jlj`.`weeklystats`;
-DROP TABLE IF EXISTS `jlj`.`totalstats`;
-DROP TABLE IF EXISTS `jlj`.`teamroster`;
-DROP TABLE IF EXISTS `jlj`.`sumwin`;
-DROP TABLE IF EXISTS `jlj`.`schedule`;
-DROP TABLE IF EXISTS `jlj`.`players`;
-DROP TABLE IF EXISTS `jlj`.`countpoints`;
-DROP TABLE IF EXISTS `jlj`.`user`;
+drop database if exists foo;
+create database foo;
+create user 'foo'@'localhost' identified by 'bar';
+grant all on foo.* to 'foo'@'localhost' identified by 'bar';
+DROP TABLE IF EXISTS `foo`.`weeklystats`;
+DROP TABLE IF EXISTS `foo`.`totalstats`;
+DROP TABLE IF EXISTS `foo`.`teamroster`;
+DROP TABLE IF EXISTS `foo`.`sumwin`;
+DROP TABLE IF EXISTS `foo`.`schedule`;
+DROP TABLE IF EXISTS `foo`.`players`;
+DROP TABLE IF EXISTS `foo`.`countpoints`;
+DROP TABLE IF EXISTS `foo`.`user`;
 
-CREATE TABLE  `jlj`.`user` (
+CREATE TABLE  `foo`.`user` (
   `username` char(20) NOT NULL DEFAULT '',
   `teamname` char(30) DEFAULT NULL,
   `password` char(20) DEFAULT NULL,
@@ -22,7 +26,7 @@ CREATE TABLE  `jlj`.`user` (
   UNIQUE KEY `Teamname` (`teamname`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE  `jlj`.`countpoints` (
+CREATE TABLE  `foo`.`countpoints` (
   `teamname` char(30) NOT NULL DEFAULT '',
   `playername` char(30) NOT NULL DEFAULT '',
   `playerposition` char(3) DEFAULT NULL,
@@ -31,7 +35,7 @@ CREATE TABLE  `jlj`.`countpoints` (
   PRIMARY KEY (`teamname`,`playername`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE  `jlj`.`players` (
+CREATE TABLE  `foo`.`players` (
   `name` char(30) NOT NULL DEFAULT '',
   `nflteam` char(30) DEFAULT NULL,
   `position` char(3) DEFAULT NULL,
@@ -45,7 +49,7 @@ CREATE TABLE  `jlj`.`players` (
   CONSTRAINT `FK_players_1` FOREIGN KEY (`owner`) REFERENCES `user` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE  `jlj`.`schedule` (
+CREATE TABLE  `foo`.`schedule` (
   `username` char(20) NOT NULL,
   `week1` char(20) DEFAULT NULL,
   `week2` char(20) DEFAULT NULL,
@@ -53,14 +57,14 @@ CREATE TABLE  `jlj`.`schedule` (
   CONSTRAINT `schedule_ibfk_1` FOREIGN KEY (`username`) REFERENCES `user` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE  `jlj`.`sumwin` (
+CREATE TABLE  `foo`.`sumwin` (
   `username` char(30) NOT NULL DEFAULT '',
   `wins` int(11) DEFAULT NULL,
   `losses` int(11) DEFAULT NULL,
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE  `jlj`.`teamroster` (
+CREATE TABLE  `foo`.`teamroster` (
   `teamname` char(30) NOT NULL DEFAULT '',
   `QB` char(30) DEFAULT NULL,
   `RB1` char(30) DEFAULT NULL,
@@ -94,7 +98,7 @@ CREATE TABLE  `jlj`.`teamroster` (
   CONSTRAINT `FK_teamroster_1` FOREIGN KEY (`teamname`) REFERENCES `user` (`teamname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE  `jlj`.`totalstats` (
+CREATE TABLE  `foo`.`totalstats` (
   `name` char(30) NOT NULL DEFAULT '',
   `passTD` double DEFAULT NULL,
   `passyards` double DEFAULT NULL,
@@ -119,7 +123,7 @@ CREATE TABLE  `jlj`.`totalstats` (
   CONSTRAINT `totalstats_ibfk_1` FOREIGN KEY (`name`) REFERENCES `players` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE  `jlj`.`weeklystats` (
+CREATE TABLE  `foo`.`weeklystats` (
   `name` char(30) NOT NULL DEFAULT '',
   `passTD` double DEFAULT NULL,
   `passyards` double DEFAULT NULL,
@@ -143,3 +147,128 @@ CREATE TABLE  `jlj`.`weeklystats` (
   PRIMARY KEY (`name`),
   CONSTRAINT `weeklystats_ibfk_1` FOREIGN KEY (`name`) REFERENCES `players` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+delimiter $$
+
+drop procedure if exists foo.isUser $$
+create procedure foo.isUser(uname char(20), pword char(20))
+begin
+  select COUNT(*) from user where username = uname and password = pword;
+end $$
+
+drop procedure if exists foo.register $$
+create procedure foo.register(uname char(20), tname char(30), pword char(30))
+begin
+  declare rows int;
+  select count(*) into rows from user where username = uname;
+  if
+    rows!=0
+  then
+    select 'Error: user exists';
+  end if;
+  if
+    rows=0
+  then
+    select count(*) into rows from user where teamname = tname;
+    if
+      rows!=0
+    then
+      select 'Error: team already in use';
+    else
+      insert into user (username, teamname, password, modes)
+        values (uname, tname, pword, 0);
+      insert into teamroster (teamname) values (tname);
+      select '';
+    end if;
+  end if;
+end $$
+
+drop procedure if exists foo.draft $$
+create procedure foo.draft(uname char(20), pname char(30), pos char(30))
+begin
+  declare success int;
+  declare tname char(30);
+  select 1 into success;
+  select teamname into tname from user where username=uname;
+  if pos = 'QB'
+  then
+    update teamroster set QB=pname where teamname=tname;
+  elseif pos = 'RB1'
+  then
+    update teamroster set RB1=pname where teamname=tname;
+  elseif pos = 'RB2'
+  then
+    update teamroster set RB2=pname where teamname=tname;
+  elseif pos = 'WR1'
+  then
+    update teamroster set WR1=pname where teamname=(
+      select teamname from user where username=tname
+  );
+  elseif pos = 'WR2'
+  then
+    update teamroster set WR2=pname where teamname=tname;
+  elseif pos = 'WR3'
+  then
+    update teamroster set WR3=pname where teamname=tname;
+  elseif pos = 'TE'
+  then
+    update teamroster set TE=pname where teamname=tname;
+  elseif pos = 'DEF'
+  then
+    update teamroster set DEF=pname where teamname=tname;
+  elseif pos = 'K'
+  then
+    update teamroster set K=pname where teamname=tname;
+  elseif pos = 'BN1'
+  then
+    update teamroster set BN1=pname where teamname=tname;
+  elseif pos = 'BN2'
+  then
+    update teamroster set BN2=pname where teamname=tname;
+  elseif pos = 'BN3'
+  then
+    update teamroster set BN3=pname where teamname=tname;
+  elseif pos = 'BN4'
+  then
+    update teamroster set BN4=pname where teamname=tname;
+  elseif pos = 'BN5'
+  then
+    update teamroster set BN5=pname where teamname=tname;
+  else select 0 into success;
+  end if;
+  if success>0
+  then
+    update players set availability=1, owner=uname where name=pname;
+    insert into countpoints (teamname, playername, playerposition)
+      values (tname, pname, pos);
+  end if;
+end $$
+
+delimiter ;
+load data local infile 'players1.csv' into table foo.players
+fields terminated by ','
+enclosed by '"'
+lines terminated by '\n'
+(name, nflteam, position);
+
+load data local infile 'players2.csv' into table foo.players
+fields terminated by ','
+enclosed by '"'
+lines terminated by '\n'
+(name, nflteam, position);
+
+load data local infile 'players3.csv' into table foo.players
+fields terminated by ','
+enclosed by '"'
+lines terminated by '\n'
+(name, nflteam, position);
+
+load data local infile 'players4.csv' into table foo.players
+fields terminated by ','
+enclosed by '"'
+lines terminated by '\n'
+(name, nflteam, position);
+
+update foo.players set availability=0;
+
+insert into foo.totalstats (name) select name from foo.players;
+insert into foo.weeklystats (name) select name from foo.players;

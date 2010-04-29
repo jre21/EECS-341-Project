@@ -25,10 +25,10 @@ rsmd = rs.getMetaData();
   <br />
   <table>
 <%
-    query = "select Teamname, windata, lossdata " +
-    "from user order by windata desc;";
-    rs = srs.executeQuery(query);
-    rsmd = rs.getMetaData();
+query = "select Teamname, windata, lossdata " +
+  "from user order by windata desc;";
+rs = srs.executeQuery(query);
+rsmd = rs.getMetaData();
 %>
     <tr>
     <% for(int i=1; i <= rsmd.getColumnCount(); ++i) { %>

@@ -80,15 +80,13 @@ if(redirect == null) {
       <td><a href="user.jsp?show=players">Available Players</a></td>
     </tr>
     <tr>
-      <td><a href="user.jsp?show=draft">Draft Players</a></td>
+      <td><a href="logout.jsp">logout</a></td>
       <td><a href="user.jsp?show=roster">Other Rosters</a></td>
       <td><a href="user.jsp?show=other_match">Other Matchups</a></td>
-      <td><a href="logout.jsp">logout</a></td>
+      <td><a href="user.jsp?show=draft">Draft Players</a></td>
     </tr>
   </table>
   <br />
-  <form action="<%=request.getRequestURL()%>" method="get">
-  <input type=hidden name="show" value="<%=show%>" />
   <table>
 <%if(show.equals("team")) {%>
 <%@include file="team.jsp"%>
@@ -103,9 +101,9 @@ if(redirect == null) {
 <%} else if(show.equals("other_match")) {%>
 <%@include file="other_match.jsp"%>
 <%} else {%>
+<%@include file="league.jsp"%>
   <% } %>
   </table>
-  </form>
 </div>
 </body>
 </html>

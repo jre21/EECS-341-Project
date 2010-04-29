@@ -3,6 +3,8 @@ query = "select teamname from user;";
 rs = srs.executeQuery(query);
 team = request.getParameter("team");
 %>
+  <form action="<%=request.getRequestURL()%>" method="get">
+  <input type=hidden name="show" value="<%=show%>" />
     <tr>
       <td colspan="8" align="center">
 	<select name="team">
@@ -86,6 +88,7 @@ team = request.getParameter("team");
       <td><%= rs.getString(i) %></td>
               <% } %>
     </tr>
+  </form>
 <%
             }
           }

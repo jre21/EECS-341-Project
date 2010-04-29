@@ -4,6 +4,8 @@ rs = srs.executeQuery(query);
 rsmd = rs.getMetaData();
 week = request.getParameter("week");
 %>
+  <form action="<%=request.getRequestURL()%>" method="get">
+  <input type=hidden name="show" value="<%=show%>" />
     <tr>
       <td colspan="6" align="center">
 	<select name="week">
@@ -60,6 +62,7 @@ week = request.getParameter("week");
       <td><%= rs.getString(i) %></td>
           <% } %>
     </tr>
+  </form>
 <%
         }
       }
