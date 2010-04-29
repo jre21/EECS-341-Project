@@ -1,7 +1,7 @@
 <%@page language="java" import="java.sql.*"%>
 <%
+String redirect = null; // Where to send the user.
 String message = null; // Error message to display to user.
-boolean confirm = false; // Confirm registration
 Cookie cookie = null;
 String user = request.getParameter("uname");
 String team = request.getParameter("tname");
@@ -26,7 +26,8 @@ if((user!=null) && !user.equals("")) {
       rs = cs.executeQuery();
       rs.first();
       if(rs.getString(1).equals("")) {
-	confirm = true;
+	if(user.equals("admin")) redirect = "admin.jsp";
+	else redirect = "user.jsp";
 	cookie = new Cookie("uname", user);
 	response.addCookie(cookie);
 	cookie = new Cookie("password", password);
@@ -43,7 +44,7 @@ if((user!=null) && !user.equals("")) {
 }
 
 /* Display the login page. */
-if (confirm == false) {
+if (redirect != null) {
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -123,7 +124,7 @@ if (confirm == false) {
 
 <body>
 <div align="center">
-  Registration successful!  Click <a href="user.jsp">here</a> to
+  Registration successful!  Click <a href="<%=redirect%>">here</a> to
   continue to the main site.
 </div>
 </body>

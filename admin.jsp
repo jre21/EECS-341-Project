@@ -18,9 +18,7 @@ Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj",
 String command = "{call isUser(?,?)}";
 CallableStatement cs = conn.prepareCall(command);
 ResultSet rs = null;
-ResultSet rs1 = null;
 ResultSetMetaData rsmd = null;
-ResultSetMetaData rsmd1 = null;
 
 /* Parse cookies for username and password */
 Cookie[] cookies = request.getCookies();
@@ -36,7 +34,7 @@ if(cookies != null) {
   }
 }
 
-if(!user.equals("") && !password.equals("")) {
+if(user.equals("admin") && !password.equals("")) {
   cs.setString(1, user);
   cs.setString(2, password);
   rs = cs.executeQuery();
@@ -53,9 +51,7 @@ else redirect = "login.jsp";
 
 if(redirect == null) {
   String query;
-  String query1;
   Statement srs = conn.createStatement();
-  Statement srs1 = conn.createStatement();
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -85,31 +81,14 @@ if(redirect == null) {
       <td><a href="user.jsp?show=other_match">Other Matchups</a></td>
       <td><a href="user.jsp?show=draft">Draft Players</a></td>
     </tr>
-    <%if(user.equals("admin")) {%>
     <tr>
       <td colspan=4 align="center">
 	<a href="admin.jsp">Admin Control Panel</a>
       </td>
     </tr>
-    <%}%>
   </table>
   <br />
   <table>
-<%if(show.equals("team")) {%>
-<%@include file="team.jsp"%>
-<%} else if(show.equals("match")) {%>
-<%@include file="match.jsp"%>
-<%} else if(show.equals("players")) {%>
-<%@include file="players.jsp"%>
-<%} else if(show.equals("draft")) {%>
-<%@include file="draft.jsp"%>
-<%} else if(show.equals("roster")) {%>
-<%@include file="roster.jsp"%>
-<%} else if(show.equals("other_match")) {%>
-<%@include file="other_match.jsp"%>
-<%} else {%>
-<%@include file="league.jsp"%>
-  <% } %>
   </table>
 </div>
 </body>
