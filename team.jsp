@@ -23,7 +23,11 @@ rsmd = rs.getMetaData();
 <% } %>
 <tr><td><br /></td></tr>
 <tr style="font-size:80%">
-<% for(int i=1; i <= 3; ++i) { %>
+<%
+  rs = srs.executeQuery(query);
+  rsmd = rs.getMetaData();
+  for(int i=1; i <= 3; ++i) {
+%>
   <td><%= rsmd.getColumnName(i) %></td>
 <% } %>
 <% for(int i=9; i <= 13; ++i) { %>
@@ -42,7 +46,11 @@ rsmd = rs.getMetaData();
 <% } %>
 <tr><td><br /></td></tr>
 <tr style="font-size:80%">
-<% for(int i=1; i <= 3; ++i) { %>
+<%
+  rs = srs.executeQuery(query);
+  rsmd = rs.getMetaData();
+  for(int i=1; i <= 3; ++i) {
+%>
   <td><%= rsmd.getColumnName(i) %></td>
 <% } %>
 <% for(int i=14; i <= 18; ++i) { %>
@@ -61,7 +69,11 @@ rsmd = rs.getMetaData();
 <% } %>
 <tr><td><br /></td></tr>
 <tr style="font-size:80%">
-<% for(int i=1; i <= 3; ++i) { %>
+<%
+  rs = srs.executeQuery(query);
+  rsmd = rs.getMetaData();
+  for(int i=1; i <= 3; ++i) {
+%>
   <td><%= rsmd.getColumnName(i) %></td>
 <% } %>
 <% for(int i=19; i <= 23; ++i) { %>

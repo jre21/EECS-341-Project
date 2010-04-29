@@ -5,9 +5,10 @@ boolean hasCookie = false;
 Cookie cookie = null;
 String user = "";
 String password = "";
-String team = "";
-String week = "";
-String alt_user = "";
+int week = 0;
+if(request.getParameter("week") != null
+   && !request.getParameter("week").equals(""))
+  week = Integer.parseInt(request.getParameter("week"));
 String show = request.getParameter("show");
 if(show==null) show = "";
 
@@ -47,11 +48,24 @@ if(user.equals("admin") && !password.equals("")) {
     redirect = "login.jsp";
   }
 }
-else redirect = "login.jsp";
+else redirect = "user.jsp";
 
 if(redirect == null) {
   String query;
   Statement srs = conn.createStatement();
+  if(request.getParameter("do") != null) {
+    if(request.getParameter("do").equals("schedule")) {
+      schedule_jsp.startGame();
+    }
+    else if(request.getParameter("do").equals("stats")) {
+      rs=srs.executeQuery("select teamname from user;");
+      while(rs.next()) {
+	String team=rs.getString(1);
+	stats_jsp.randomStats(team);
+      }
+      stats_jsp.startNextWeek(week);
+    }
+  }
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -88,6 +102,7 @@ if(redirect == null) {
     </tr>
   </table>
   <br />
+  <form action="<%=request.getRequestURL()%>" method="post">
   <table>
     <tr>
       <td colspan=2>Generate schedule:</td>
@@ -102,12 +117,10 @@ if(redirect == null) {
 	    query = "select * from schedule;";
 	    rs = srs.executeQuery(query);
 	    rsmd = rs.getMetaData();
-	    week = request.getParameter("week");
 	    %>
     <%for(int i=2; i <= rsmd.getColumnCount(); ++i) {%>
-	  <option value="<%= rsmd.getColumnName(i) %>" <%
-	    if(rsmd.getColumnName(i).equals(week)){%>selected<%}%>>
-	    <%= rsmd.getColumnName(i) %>
+	  <option value="<%= rsmd.getColumnName(i) %>">
+	    <%= i-1 %>
 	  </option>
     <%}%>
 	</select>
@@ -115,6 +128,7 @@ if(redirect == null) {
       <td align="right"><input type="submit" name="do" value="stats" /></td>
     </tr>
   </table>
+  </form>
 </div>
 </body>
 </html>

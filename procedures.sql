@@ -51,9 +51,7 @@ begin
     update teamroster set RB2=pname where teamname=tname;
   elseif pos = 'WR1'
   then
-    update teamroster set WR1=pname where teamname=(
-      select teamname from user where username=tname
-  );
+    update teamroster set WR1=pname where teamname=tname;
   elseif pos = 'WR2'
   then
     update teamroster set WR2=pname where teamname=tname;
