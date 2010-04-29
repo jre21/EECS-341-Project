@@ -89,6 +89,31 @@ if(redirect == null) {
   </table>
   <br />
   <table>
+    <tr>
+      <td colspan=2>Generate schedule:</td>
+      <td align="right"><input type="submit" name="do" value="schedule" /></td>
+    </tr>
+    <tr>
+      <td>Play a week:</td>
+      <td align="right">
+	<select name="week">
+	  <option value="">Select a week</option>
+	    <%
+	    query = "select * from schedule;";
+	    rs = srs.executeQuery(query);
+	    rsmd = rs.getMetaData();
+	    week = request.getParameter("week");
+	    %>
+    <%for(int i=2; i <= rsmd.getColumnCount(); ++i) {%>
+	  <option value="<%= rsmd.getColumnName(i) %>" <%
+	    if(rsmd.getColumnName(i).equals(week)){%>selected<%}%>>
+	    <%= rsmd.getColumnName(i) %>
+	  </option>
+    <%}%>
+	</select>
+      </td>
+      <td align="right"><input type="submit" name="do" value="stats" /></td>
+    </tr>
   </table>
 </div>
 </body>
