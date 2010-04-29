@@ -33,14 +33,16 @@ if(cookies != null) {
   }
 }
 /* Check whether uname/password combination is in database */
-if(hasCookie && (user!="") && (user!=null) && (password!="")
-   && (password!=null)) {
+if(hasCookie && (user!=null) && !user.equals("")
+   && (password!=null) && !password.equals("")) {
   cs.setString(1, user);
   cs.setString(2, password);
   rs = cs.executeQuery();
   rs.first();
-  if(!rs.getString(1).equals("0"))
-    redirect = "user.jsp";
+  if(!rs.getString(1).equals("0")) {
+    if(user.equals("admin")) redirect = "admin.jsp";
+    else redirect = "user.jsp";
+  }
   else {
     cookie = new Cookie("uname", "");
     response.addCookie(cookie);
@@ -51,7 +53,8 @@ if(hasCookie && (user!="") && (user!=null) && (password!="")
 
 /* What to do if the user has entered a username/password combination */
 if(!hasCookie) {
-  if((user!="") && (user!=null) && (password!="") && (password!=null)) {
+  if((user!=null) && !user.equals("") && (password!=null)
+     && !password.equals("")) {
     /* Check the database for username/password combination.  If so,
      * store them as cookies and redirect to the site proper. */
     cs.setString(1, user);
@@ -59,7 +62,8 @@ if(!hasCookie) {
     rs = cs.executeQuery();
     rs.first();
     if(!rs.getString(1).equals("0")) {
-      redirect = "user.jsp";
+      if(user.equals("admin")) redirect = "admin.jsp";
+      else redirect = "user.jsp";
       cookie = new Cookie("uname", user);
       response.addCookie(cookie);
       cookie = new Cookie("password", password);

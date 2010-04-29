@@ -17,8 +17,8 @@ CallableStatement cs = conn.prepareCall(command);
 ResultSet rs = null;
 
 /* Add the user to the database. */
-if((user!="") && (user!=null)) {
-  if((team!="") && (team!=null)) {
+if((user!=null) && !user.equals("")) {
+  if((team!=null) && !team.equals("")) {
     if(password.equals(password2)) {
       cs.setString(1, user);
       cs.setString(2, team);

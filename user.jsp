@@ -28,15 +28,15 @@ if(cookies != null) {
   for(int i=0; i<cookies.length; i++) {
     cookie = cookies[i];
     if(cookie.getName().equals("uname"))
-      if(cookie.getValue() != "")
+      if(!cookie.getValue().equals(""))
 	user = cookie.getValue();
     if(cookie.getName().equals("password"))
-      if(cookie.getValue() != "")
+      if(!cookie.getValue().equals(""))
 	password = cookie.getValue();
   }
 }
 
-if((user != "") && (password != "")) {
+if(!user.equals("") && !password.equals("")) {
   cs.setString(1, user);
   cs.setString(2, password);
   rs = cs.executeQuery();
@@ -85,6 +85,13 @@ if(redirect == null) {
       <td><a href="user.jsp?show=other_match">Other Matchups</a></td>
       <td><a href="user.jsp?show=draft">Draft Players</a></td>
     </tr>
+    <%if(user.equals("admin")) {%>
+    <tr>
+      <td />
+      <td colspan=2><a href="admin.jsp">Admin Control Panel</a></td>
+      <td />
+    </tr>
+    <%}%>
   </table>
   <br />
   <table>
