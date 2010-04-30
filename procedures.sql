@@ -25,8 +25,9 @@ begin
     then
       select 'Error: team already in use';
     else
-      insert into user (username, teamname, password, modes)
-        values (uname, tname, pword, 0);
+      insert into user (username, teamname, password, totalpoints,
+         weekpoints, windata, lossdata, modes)
+        values (uname, tname, pword, 0, 0, 0, 0, 0);
       insert into teamroster (teamname) values (tname);
       select '';
     end if;

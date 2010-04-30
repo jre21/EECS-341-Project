@@ -55,9 +55,9 @@ if(redirect == null) {
   Statement srs = conn.createStatement();
   if(request.getParameter("do") != null) {
     if(request.getParameter("do").equals("schedule")) {
-      schedule_jsp.startGame();
+      schedule_jsp.makeSchedule();
     }
-    else if(request.getParameter("do").equals("stats")) {
+    else if(request.getParameter("do").equals("stats") && (week != 0)) {
       rs=srs.executeQuery("select teamname from user;");
       while(rs.next()) {
 	String team=rs.getString(1);
@@ -119,8 +119,8 @@ if(redirect == null) {
 	    rsmd = rs.getMetaData();
 	    %>
     <%for(int i=2; i <= rsmd.getColumnCount(); ++i) {%>
-	  <option value="<%= rsmd.getColumnName(i) %>">
-	    <%= i-1 %>
+	      <option value="<%= i-1 %>" <%if(week==i-1) {%>selected<%}%>>
+	    <%= rsmd.getColumnName(i) %>
 	  </option>
     <%}%>
 	</select>

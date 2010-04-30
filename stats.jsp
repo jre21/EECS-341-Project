@@ -1,4 +1,5 @@
 <%@page language="java" import="java.sql.*,java.util.*"%>
+<%startNextWeek(1);%>
 <%!
   public static void randomStats(String teamname)throws Exception{
   
@@ -324,7 +325,7 @@
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
         Statement instruction = conn.createStatement();
         //NEED TO FIGURE OUT HOW TO UPDATE ROW BY ROW
-        instruction.executeUpdate("UPDATE weeklystats w SET w.turnovers="+to+",w.sacks="+sack+",w.defensiveTD="+td+",w.pointsallowed="+allow+", calpoints="+points+" w.name='"+playerName+"'");
+        instruction.executeUpdate("UPDATE weeklystats w SET w.turnovers="+to+",w.sacks="+sack+",w.defensiveTD="+td+",w.pointsallowed="+allow+", calpoints="+points+" where w.name='"+playerName+"'");
         conn.close();
     }
     
@@ -334,7 +335,7 @@
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
         Statement instruction = conn.createStatement();
         //NEED TO FIGURE OUT HOW TO UPDATE ROW BY ROW
-        instruction.executeUpdate("UPDATE weeklystats w SET w.fieldgoalless40="+l40+",w.fieldgoalgreater40="+g40+",w.missedfieldgoaless40="+ml40+",w.missedfieldgoalgreater40="+mg40+",w.PAT="+pat+",w.missPAT="+mpat+",w.calpoints="+points+" WHERE w.name='"+playerName+"'");
+        instruction.executeUpdate("UPDATE weeklystats w SET w.fieldgoalless40="+l40+",w.fieldgoalgreater40="+g40+",w.missedfieldgoaless40="+ml40+",w.missedfieldgoalgreater40="+mg40+",w.PAT="+pat+",w.missedPAT="+mpat+",w.calpoints="+points+" WHERE w.name='"+playerName+"'");
         conn.close();
     }
     
@@ -401,24 +402,41 @@ public static boolean compareWin(String username, String otherUserName)
   public static void calWin(int thisWeek)throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
-    ResultSet resultS = instruction.executeQuery("select s.username,s.week"+thisWeek+" from schedule");
-    ResultSet resultT = instruction.executeQuery("select * from schedule");
-    int totalTeam=(resultT.getMetaData().getColumnCount()-1)/2;
+    ResultSet resultS = instruction.executeQuery("select s.username,s.week"+thisWeek+" from schedule s");
+    int totalTeam=calTotalInPlayUser();
+
+    ArrayList<String> firstSet=new ArrayList<String>();
+    ArrayList<String> secondSet=new ArrayList<String>();
+    Set<String> containSet=new HashSet<String>();
     while(resultS.next()){
+     firstSet.add(resultS.getString(1));
+     secondSet.add(resultS.getString(2));
+    }
+    if(firstSet.size()!=0){
+    int index=0;
+    while(index<firstSet.size()){
     
-      String first=resultS.getString(1);
-      String second=resultS.getString(2);
-      ResultSet resultA = instruction.executeQuery("select distinct w.name,w.calpoints from weeklystats w where w.name IN (select p.name from players p where p.owner='"+first+"'");
-      ResultSet resultB = instruction.executeQuery("select distinct w.name,w.calpoints from weeklystats w where w.name IN (select p.name from players p where p.owner='"+second+"'");
+      String first=firstSet.get(index);
+      String second=secondSet.get(index);
+      if(containSet.contains(first) || containSet.contains(second)){
+       
+        containSet.add(first);
+        containSet.add(second);
+        index++;
+        continue;
+      }
+      else {
+      ResultSet resultA = instruction.executeQuery("select distinct w.name,w.calpoints from weeklystats w where w.name IN (select p.name from players p where p.owner='"+first+"')");
       double calpointA=0;
-      double calpointB=0;
-      while(resultA.next()){
+       while(resultA.next()){
         
          calpointA+=resultA.getDouble(2);
       }
-       
+      ResultSet resultB = instruction.executeQuery("select distinct w.name,w.calpoints from weeklystats w where w.name IN (select p.name from players p where p.owner='"+second+"')");
+      double calpointB=0;
+      
       while(resultB.next()){
         
         calpointB+=resultB.getDouble(2);
@@ -450,25 +468,52 @@ public static boolean compareWin(String username, String otherUserName)
           instruction.executeUpdate("update user u SET u.lossdata=u.lossdata+1 where u.username='"+first+"'");
         }
       }
+      containSet.add(first);
+      containSet.add(second);
+      index++;
+      }
     }
-    
+    }
     con.close();
   }//calculate the winner of specific roster
   
   public static void calRank()throws Exception{
   
     Class.forName("com.mysql.jdbc.Driver");
-    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj?user=root");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
     Statement instruction = con.createStatement();
-    ResultSet resultAt = instruction.executeQuery("select u.username from user u order by u.windata,u.rank");
+    ResultSet resultAt = instruction.executeQuery("select u.username from user u order by u.lossdata,u.rank");
+    ArrayList<String> tempSet=new ArrayList<String>();
+    while(resultAt.next()){
+    
+      tempSet.add(resultAt.getString(1));
+    }
+    int index=0;
     int rankIndex=1;
     instruction.executeUpdate("update user u SET u.rank=null");
-    while(resultAt.next()){
-      String temp=resultAt.getString(1);
+    if(tempSet.size()!=0){
+    while(index<tempSet.size()){
+      String temp=tempSet.get(index);;
       instruction.executeUpdate("update user u SET u.rank="+rankIndex+" where u.username='"+temp+"'");
       rankIndex++;
+      index++;
+    }
     }
     con.close();
+  }
+  
+  public static int calTotalInPlayUser()throws Exception{
+  
+    Class.forName("com.mysql.jdbc.Driver");
+    Connection con= DriverManager.getConnection("jdbc:mysql://localhost/jlj","jlj","fanball");
+    Statement instruction = con.createStatement();
+    ResultSet resultT = instruction.executeQuery("select s.username from schedule s");
+    int totalTeam=0;
+    while(resultT.next()){
+    totalTeam++;
+    }
+    con.close();
+    return totalTeam;
   }
   
   public static void randomInjuryStatus()throws Exception{
