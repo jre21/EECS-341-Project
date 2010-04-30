@@ -53,8 +53,8 @@ team = request.getParameter("team");
           try {rs.findColumn(week);}
           catch (SQLException e) {error=true;}
           if(!error) {
-	    query="select position, name, weekpoints from players "+
-	      "where owner='"+alt_user+"';";
+            query="select p.position, p.name, s.calpoints from players p, "+
+              "weeklystats s where p.owner='"+alt_user+"' and p.name=s.name;";
 	    rs = srs.executeQuery(query);
 	    rsmd = rs.getMetaData();
 %>
@@ -76,9 +76,9 @@ team = request.getParameter("team");
     </tr>
             <%}%>
 <%
-	    query="select position, name, weekpoints from players where "+
-	      "owner=(select "+week+" from schedule where username='"+
-              alt_user+"');";
+	    query="select p.position, p.name, s.calpoints from players p, "+
+              "weeklystats s where owner=(select "+week+" from schedule "+
+              "where username='"+alt_user+"') and p.name=s.name;";
 	    rs = srs.executeQuery(query);
 	    rsmd = rs.getMetaData();
 %>

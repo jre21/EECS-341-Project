@@ -9,84 +9,15 @@ rsmd = rs.getMetaData();
     <b>My Team</b>
   </td>
 </tr>
-<tr style="font-size:80%">
-<%for(int i=1; i <= 8; ++i) {%>
-  <td><%= rsmd.getColumnName(i) %></td>
-<%}%>
+<tr>
+  <td><%= rsmd.getColumnName(1) %></td>
+  <td><%= rsmd.getColumnName(2) %></td>
+  <td><%= rsmd.getColumnName(23) %></td>
 </tr>
 <%while(rs.next()) {%>
-<tr style="font-size:80%">
-  <% for(int i=1; i <= 8; ++i) { %>
-  <td><%= rs.getString(i) %></td>
-  <% } %>
-</tr>
-<% } %>
-<tr><td><br /></td></tr>
-<tr style="font-size:80%">
-<%
-  rs = srs.executeQuery(query);
-  rsmd = rs.getMetaData();
-  for(int i=1; i <= 3; ++i) {
-%>
-  <td><%= rsmd.getColumnName(i) %></td>
-<% } %>
-<% for(int i=9; i <= 13; ++i) { %>
-  <td><%= rsmd.getColumnName(i) %></td>
-<% } %>
-</tr>
-<% while(rs.next()) { %>
-<tr style="font-size:80%">
-  <% for(int i=1; i <= 3; ++i) { %>
-  <td><%= rs.getString(i) %></td>
-  <% } %>
-  <% for(int i=9; i <= 13; ++i) { %>
-  <td><%= rs.getString(i) %></td>
-  <% } %>
-</tr>
-<% } %>
-<tr><td><br /></td></tr>
-<tr style="font-size:80%">
-<%
-  rs = srs.executeQuery(query);
-  rsmd = rs.getMetaData();
-  for(int i=1; i <= 3; ++i) {
-%>
-  <td><%= rsmd.getColumnName(i) %></td>
-<% } %>
-<% for(int i=14; i <= 18; ++i) { %>
-  <td><%= rsmd.getColumnName(i) %></td>
-<% } %>
-</tr>
-<% while(rs.next()) { %>
-<tr style="font-size:80%">
-  <% for(int i=1; i <= 3; ++i) { %>
-  <td><%= rs.getString(i) %></td>
-  <% } %>
-  <% for(int i=14; i <= 18; ++i) { %>
-  <td><%= rs.getString(i) %></td>
-  <% } %>
-</tr>
-<% } %>
-<tr><td><br /></td></tr>
-<tr style="font-size:80%">
-<%
-  rs = srs.executeQuery(query);
-  rsmd = rs.getMetaData();
-  for(int i=1; i <= 3; ++i) {
-%>
-  <td><%= rsmd.getColumnName(i) %></td>
-<% } %>
-<% for(int i=19; i <= 23; ++i) { %>
-  <td><%= rsmd.getColumnName(i) %></td>
-<% } %>
-</tr>
-<% while(rs.next()) { %>
-<tr style="font-size:80%">
-  <% for(int i=1; i <= 3; ++i) { %>
-  <td><%= rs.getString(i) %></td>
-  <% } %>
-  <% for(int i=19; i <= 23; ++i) { %>
-  <td><%= rs.getString(i) %></td>
-  <% } %>
+<tr>
+  <td><%= rs.getString(1) %></td>
+  <td><%= rs.getString(2) %></td>
+  <td align="right"><%= rs.getString(23) %></td>
 </tr>
 <% }%>

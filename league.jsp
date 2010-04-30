@@ -54,8 +54,8 @@ week = request.getParameter("week");
       try {rs.findColumn(week);}
       catch (SQLException e) {error=true;}
       if(!error) {
-	query="select u.teamname, s."+week+" from user u, schedule s "+
-          "where u.username=s.username";
+	query="select u.teamname, o.teamname from user u, schedule s, "+
+          "user o where u.username=s.username and o.username=s."+week;
 	rs = srs.executeQuery(query);
 	rsmd = rs.getMetaData();
 %>

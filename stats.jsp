@@ -1,5 +1,4 @@
 <%@page language="java" import="java.sql.*,java.util.*"%>
-<%startNextWeek(1);%>
 <%!
   public static void randomStats(String teamname)throws Exception{
   
